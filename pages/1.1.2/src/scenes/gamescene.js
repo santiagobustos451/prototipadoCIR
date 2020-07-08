@@ -13,6 +13,8 @@ var overlayGUI;//overlays
 var overlaySombra;
 var barraFregadero;
 var overlayTicket;
+var dibujoTicket = [];
+var textoTicket;
 //var overlayTicket2;
 var overlayBurgerDone;
 var overlayPausa;
@@ -53,29 +55,12 @@ var hb_fregadero;
 var ingrediente;
 var timer;
 
-var ticket1;
-var ticket2;
-var ticket3;
-var ticket4;
-var ticket5;
-var ticket6;
 
-/*var ticket1;
-var ticket1_lista = [3,5,0,1,2,4];//5=hamburguesa 4=pan de arriba
-var ticket2;
-var ticket2_lista = [3,5,0,5,0,4];//3=pan de abajo 2= lechuga, 1=cebolla, 0=tomate
-*/
+var comandera = []
+var comanderaNombres = ["ticket1","ticket2","ticket3","ticket4","ticket5","ticket6",]
 
-var tickets = [
-    {
-        id: 1,
-        contenido: [3,5,0,1,2,4]
-    },
-    {
-        id: 2,
-        contenido: [3,5,0,5,0,4]
-    }
-]
+
+var tickets;
 
 var puntajeA=0;//fidelidad
 var puntajeB=0;//salubridad
@@ -105,6 +90,7 @@ class gamescene extends Phaser.Scene {
 
         //centro de la pantalla
 
+        var mundo = this;
         let center_width = this.sys.game.config.width/2;
         let center_height = this.sys.game.config.height/2;
 
@@ -344,11 +330,59 @@ class gamescene extends Phaser.Scene {
         overlayGUI = this.add.sprite(center_width,center_height,'overlay').setScrollFactor(0).setDepth(2);
         overlayPuntaje = this.add.image(center_width,center_width,'overlay_puntaje').setDepth(-1).setScrollFactor(0);
 
-        ticket1 = this.add.sprite(280,110,'ticket1').setScrollFactor(0).setDepth(3).setInteractive();
-        ticket2 = this.add.sprite(340,110,'ticket2').setScrollFactor(0).setDepth(3).setInteractive();
-        
+        // TICKETS  
+
         overlayTicket = this.add.image(center_width,center_width,'overlay_base').setDepth(-1).setScrollFactor(0);
-        ticket1.on("pointerup",function(){
+        textoTicket = this.add.text(275,200,"",{ fontFamily: 'Pacifico', fontSize: 46, color: '#000000' }).setDepth(10).setScrollFactor(0);
+
+        var ticketsjson = this.cache.json.get('level1');
+        tickets = [ticketsjson.ticket_1,ticketsjson.ticket_2,ticketsjson.ticket_3,ticketsjson.ticket_4,ticketsjson.ticket_5,ticketsjson.ticket_6]
+        
+        for(var i=0; i<6;i++){
+            if(tickets[i].exists == true){
+                comandera[i] = this.add.sprite(265+i*60,110,comanderaNombres[i]).setScrollFactor(0).setDepth(3).setInteractive();
+                comandera[i].id = tickets[i].id;
+                comandera[i].content = tickets[i].content;
+                comandera[i].on("pointerup",function(){
+                    if(!F_burgerDone){
+                        overlayTicket.setInteractive().setDepth(9);
+                        textoTicket.setText(this.id).setDepth(10);
+                        var separacion = 300/this.content.length;
+                        for(var b=0;b<this.content.length;b++){
+                            switch(this.content[b]){//5=hamburguesa 4=pan de arriba 3=pan de abajo 2= lechuga, 1=cebolla, 0=tomate
+                                case 0:
+                                    dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_tomate").setScrollFactor(0).setDepth(10);
+                                    break;
+                                case 1:
+                                    dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_cebolla").setScrollFactor(0).setDepth(10);
+                                    break;
+                                case 2:
+                                    dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_lechuga").setScrollFactor(0).setDepth(10);
+                                    break;
+                                case 3:
+                                    dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_panabajo").setScrollFactor(0).setDepth(10);
+                                    break;
+                                case 4:
+                                    dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_panarriba").setScrollFactor(0).setDepth(10);
+                                    break;
+                                case 5:
+                                    dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_tomate").setScrollFactor(0).setDepth(10);
+                                    break;
+                            
+                            }
+
+                        }
+                    }
+                });
+            }
+        }
+
+
+        
+  
+        
+
+        /*ticket1.on("pointerup",function(){
             if(F_burgerDone==false){
                 overlayTicket.setInteractive().setDepth(9);
             }
@@ -501,13 +535,16 @@ class gamescene extends Phaser.Scene {
                 console.log(puntajeB2);
                 console.log(puntajeTotal2);
             }
-        },this);
+        },this);*/
         overlayTicket.on("pointerup",function(){
             overlayTicket.setDepth(-1);
+            textoTicket.setDepth(-1);
+            for(var i=0;i<dibujoTicket.length;i++){
+                dibujoTicket[i].destroy();
+            }
+            
         },this)
-        overlayTicket2.on("pointerup",function(){
-            overlayTicket2.setDepth(-1);
-        },this)
+        
 
         botFregadero = this.add.sprite(center_width-250,center_height+250,'sp_b_fregadero').setScrollFactor(0).setInteractive();
         botFregadero.depth = 3;
