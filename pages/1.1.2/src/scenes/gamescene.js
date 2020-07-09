@@ -61,20 +61,20 @@ var comanderaNombres = ["ticket1","ticket2","ticket3","ticket4","ticket5","ticke
 
 
 var tickets;
+var ticketsleft;
+var ticketsjson;
 
 var puntajeA=0;//fidelidad
 var puntajeB=0;//salubridad
 var puntajeC=100;//tiempo
 var puntajeTotal = 100;
-var puntajeA1=0;//fidelidad
-var puntajeB1=0;//salubridad
-var puntajeC1=100;//tiempo
-var puntajeTotal1 = 100;
-var puntajeA2=0;//fidelidad
-var puntajeB2=0;//salubridad
-var puntajeC2=100;//tiempo
-var puntajeTotal2 = 100;
-var ticketsleft = 2;
+
+var puntajeAfinal=0;//fidelidad
+var puntajeBfinal=0;//salubridad
+var puntajeCfinal=100;//tiempo
+var puntajeTotalfinal = 0;
+
+
 
 
 var repeticionesA = 0;
@@ -330,14 +330,15 @@ class gamescene extends Phaser.Scene {
         overlayGUI = this.add.sprite(center_width,center_height,'overlay').setScrollFactor(0).setDepth(2);
         overlayPuntaje = this.add.image(center_width,center_width,'overlay_puntaje').setDepth(-1).setScrollFactor(0);
 
-        // TICKETS  
+        // TICKETS 
 
         overlayTicket = this.add.image(center_width,center_width,'overlay_base').setDepth(-1).setScrollFactor(0);
         textoTicket = this.add.text(275,200,"",{ fontFamily: 'Pacifico', fontSize: 46, color: '#000000' }).setDepth(10).setScrollFactor(0);
 
-        var ticketsjson = this.cache.json.get('level1');
+        ticketsjson = this.cache.json.get('level1');
+        ticketsleft = ticketsjson.cantTickets
         tickets = [ticketsjson.ticket_1,ticketsjson.ticket_2,ticketsjson.ticket_3,ticketsjson.ticket_4,ticketsjson.ticket_5,ticketsjson.ticket_6]
-        
+        console.log(F_burgerDone)
         for(var i=0; i<6;i++){
             if(tickets[i].exists == true){
                 comandera[i] = this.add.sprite(265+i*60,110,comanderaNombres[i]).setScrollFactor(0).setDepth(3).setInteractive();
@@ -366,176 +367,98 @@ class gamescene extends Phaser.Scene {
                                     dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_panarriba").setScrollFactor(0).setDepth(10);
                                     break;
                                 case 5:
-                                    dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_tomate").setScrollFactor(0).setDepth(10);
+                                    dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"33").setScrollFactor(0).setDepth(10).setScale(1.3);
                                     break;
                             
                             }
 
                         }
                     }
+                    else{ //determinación de puntaje
+                        
+                        var cantTabla = tabla_burgers.length;
+                        var cantTicket = this.content.length;
+                        for(var b = 0;b<6;b++){//FIDELIDAD - compara las repeticiones de cada ingrediente en ticket y en hamburguesa armada
+                            for(var c = 0;c<cantTabla;c++){
+                                if(tabla_burgers[c].data.values.ing == b){
+                                    repeticionesA+=1
+                                }
+                            }
+                            for(var d = 0;d<cantTicket;d++){
+                                if(this.content[d] == b){
+                                    repeticionesB+=1
+                                }
+                            }
+                            if(repeticionesA==repeticionesB){ //si hay igual repeticion que en ticket, se suma puntaje
+                                puntajeA+=1;
+                            }
+                            else if(repeticionesA<repeticionesB){//si hay menos cantidad de cada ingrediente se resta puntaje
+                                if(puntajeA>0){
+                                    puntajeA-=1;
+                                }
+                            }
+                            repeticionesA = 0;
+                            repeticionesB = 0;
+                        }
+                        for(var c = 0;c<cantTabla;c++){//chequea contaminación de ingredientes y cocción de las hamburguesas
+                            if(tabla_burgers[c].data.values.contaminado==true){
+                                F_contaminado=true;
+                            }
+                            if(tabla_burgers[c].data.values.ing==5){//5 = hamburguesa
+                                if(tabla_burgers[c].data.values.ladoA-3>0){//si se quemo resta puntaje
+                                    puntajeA-=(tabla_burgers[c].data.values.ladoA-3)*2;
+                                }
+                                if(tabla_burgers[c].data.values.ladoB-3>0){
+                                    puntajeA-=(tabla_burgers[c].data.values.ladoB-3)*2;
+                                }
+                            }
+                        }
+                        if(!F_contaminado){//si no está contaminado, se suma puntaje
+                            puntajeB+=1;
+                        }
+                        for(var c = 0;c<cantTabla;c++){//chequea el orden de los ingredientes, suma puntos de manera acorde, y luego elimina la hamburguesa
+                            
+                            if(tabla_burgers[0].data.values.ing==this.content[c]){
+                                puntajeA+=1;
+                            }
+                            tabla_burgers[0].x+=5000;
+                            tabla_burgers.splice(0,1);
+                        }
+                        
+                        
+                        F_burgerDone=false;
+                        overlayBurgerDone.setDepth(-1);
+                        b_basura.setDepth(-1);
+                        this.setDepth(-1);
+                        this.setInteractive(false);
+                        ticketsleft-=1;
+                        puntajeA = Phaser.Math.CeilTo((puntajeA/12)*100);
+                        puntajeB = Phaser.Math.CeilTo((puntajeB)*100);
+                        if(puntajeB==0){
+                            puntajeTotal = Phaser.Math.CeilTo((8*puntajeA+8*puntajeB+puntajeC)/17);
+                        }
+                        else{
+                            puntajeTotal = Phaser.Math.CeilTo((8*puntajeA+puntajeB+puntajeC)/10);
+                        }
+                        puntajeAfinal+=puntajeA
+                        puntajeBfinal+=puntajeB
+                        //puntajeCfinal+=puntajeC
+                        puntajeTotalfinal+=puntajeTotal
+                        console.log("Fidelidad:"+puntajeA);
+                        console.log("Salubridad:"+puntajeB);
+                        console.log("Total:"+puntajeTotal);
+                        
+                        puntajeA=0;//fidelidad
+                        puntajeB=0;//salubridad
+                        puntajeC=100;//tiempo
+                        puntajeTotal = 100;
+
+                        
+                    }
+                    
                 });
             }
         }
-
-
-        
-  
-        
-
-        /*ticket1.on("pointerup",function(){
-            if(F_burgerDone==false){
-                overlayTicket.setInteractive().setDepth(9);
-            }
-            else{//determinación de puntaje
-                var cantTabla = tabla_burgers.length;
-                var cantTicket = ticket1_lista.length;
-                for(var b = 0;b<6;b++){
-                    for(var c = 0;c<cantTabla;c++){
-                        if(tabla_burgers[c].data.values.ing == b){
-                            repeticionesA+=1
-                        }
-                    }
-                    for(var d = 0;d<cantTicket;d++){
-                        if(ticket1_lista[d] == b){
-                            repeticionesB+=1
-                        }
-                    }
-                    if(repeticionesA==repeticionesB){
-                        puntajeA1+=1;
-                    }
-                    else if(repeticionesA<repeticionesB){
-                        if(puntajeA1>0){
-                            puntajeA1-=1;
-                        }
-                    }
-                    repeticionesA = 0;
-                    repeticionesB = 0;
-                }
-                for(var c = 0;c<cantTabla;c++){                   
-                    if(tabla_burgers[c].data.values.contaminado==true){
-                        F_contaminado=true;
-                    }
-                    if(tabla_burgers[c].data.values.ing==5){
-                        if(tabla_burgers[c].data.values.ladoA-3>0){
-                            puntajeA1-=(tabla_burgers[c].data.values.ladoA-3)*2;
-                        }
-                        if(tabla_burgers[c].data.values.ladoB-3>0){
-                            puntajeA1-=(tabla_burgers[c].data.values.ladoB-3)*2;
-                        }
-                    }
-                }
-                if(!F_contaminado){
-                    puntajeB1+=1;
-                }
-                for(var c = 0;c<cantTabla;c++){
-                    
-                    if(tabla_burgers[0].data.values.ing==ticket1_lista[c]){
-                        puntajeA1+=1;
-                    }
-                    tabla_burgers[0].x+=5000;
-                    tabla_burgers.splice(0,1);
-                }
-                
-                
-                F_burgerDone=false;
-                overlayBurgerDone.setDepth(-1);
-                b_basura.setDepth(-1);
-                ticket1.setDepth(-1);
-                ticket1.setInteractive(false);
-                ticketsleft-=1;
-                puntajeA1 = Phaser.Math.CeilTo((puntajeA1/12)*100);
-                puntajeB1 = Phaser.Math.CeilTo((puntajeB1)*100);
-                if(puntajeB1==0){
-                    puntajeTotal1 = Phaser.Math.CeilTo((8*puntajeA1+8*puntajeB1+puntajeC1)/17);
-                }
-                else{
-                    puntajeTotal1 = Phaser.Math.CeilTo((8*puntajeA1+puntajeB1+puntajeC1)/10);
-                }
-                
-                console.log(puntajeA1);
-                console.log(puntajeB1);
-                console.log(puntajeTotal1);
-            }
-        },this);
-        overlayTicket.on("pointerup",function(){
-            overlayTicket.setDepth(-1);
-        },this)
-
-        ticket2.on("pointerup",function(){
-            if(F_burgerDone==false){
-                overlayTicket2.setInteractive().setDepth(9);
-            }
-            else{//determinación de puntaje
-                var cantTabla = tabla_burgers.length;
-                var cantTicket = ticket2_lista.length;
-                for(var b = 0;b<6;b++){
-                    for(var c = 0;c<cantTabla;c++){
-                        if(tabla_burgers[c].data.values.ing == b){
-                            repeticionesA+=1
-                        }
-                    }
-                    for(var d = 0;d<cantTicket;d++){
-                        if(ticket2_lista[d] == b){
-                            repeticionesB+=1
-                        }
-                    }
-                    if(repeticionesA==repeticionesB){
-                        puntajeA2+=1;
-                    }
-                    else if(repeticionesA<repeticionesB){
-                        if(puntajeA2>0){
-                            puntajeA2-=1;
-                        }
-                    }
-                    repeticionesA = 0;
-                    repeticionesB = 0;
-                }
-                for(var c = 0;c<cantTabla;c++){                   
-                    if(tabla_burgers[c].data.values.contaminado==true){
-                        F_contaminado=true;
-                        
-                    }
-                    if(tabla_burgers[c].data.values.ing==5){
-                        if(tabla_burgers[c].data.values.ladoA-3>0){
-                            puntajeA2-=(tabla_burgers[c].data.values.ladoA-3);
-                        }
-                        if(tabla_burgers[c].data.values.ladoB-3>0){
-                            puntajeA2-=(tabla_burgers[c].data.values.ladoB-3);
-                        }
-                    }
-                }
-                if(!F_contaminado){
-                    puntajeB2+=1;
-                }
-                for(var c = 0;c<cantTabla;c++){
-                    
-                    if(tabla_burgers[0].data.values.ing==ticket2_lista[c]){
-                        puntajeA2+=1;
-                    }
-                    tabla_burgers[0].x+=5000;
-                    tabla_burgers.splice(0,1);
-                }
-                
-                
-                F_burgerDone=false;
-                overlayBurgerDone.setDepth(-1);
-                b_basura.setDepth(-1);
-                ticket2.setDepth(-1);
-                ticket2.setInteractive(false);
-                ticketsleft-=1;
-                puntajeA2 = Phaser.Math.CeilTo((puntajeA2/12)*100);
-                puntajeB2 = Phaser.Math.CeilTo((puntajeB2)*100);
-                if(puntajeB2==0){
-                    puntajeTotal2 = Phaser.Math.CeilTo((8*puntajeA2+8*puntajeB2+puntajeC2)/17);
-                }
-                else{
-                    puntajeTotal2 = Phaser.Math.CeilTo((8*puntajeA2+puntajeB2+puntajeC2)/10);
-                }
-                console.log(puntajeA2);
-                console.log(puntajeB2);
-                console.log(puntajeTotal2);
-            }
-        },this);*/
         overlayTicket.on("pointerup",function(){
             overlayTicket.setDepth(-1);
             textoTicket.setDepth(-1);
@@ -650,22 +573,26 @@ class gamescene extends Phaser.Scene {
         
         //si nivel terminado
         if(ticketsleft==0){
-            puntajeA = Phaser.Math.CeilTo((puntajeA1+puntajeA2)/2);
+            /*puntajeA = Phaser.Math.CeilTo((puntajeA1+puntajeA2)/2);
             puntajeB = Phaser.Math.CeilTo((puntajeB1+puntajeB2)/2);
-            puntajeTotal = Phaser.Math.CeilTo((puntajeTotal1+puntajeTotal2)/2);
+            puntajeTotal = Phaser.Math.CeilTo((puntajeTotal1+puntajeTotal2)/2);*/
+            puntajeAfinal = puntajeAfinal/ticketsjson.cantTickets
+            puntajeBfinal = puntajeBfinal/ticketsjson.cantTickets
+            puntajeCfinal = puntajeCfinal
+            puntajeTotalfinal = puntajeTotalfinal/ticketsjson.cantTickets
             F_burgerDone=true;
             overlayPuntaje.setDepth(9);
-            if(puntajeTotal>70){
+            if(puntajeTotalfinal>70){
                 this.add.text(150, 150, '¡Genial!', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0); 
             }
             else{
                 this.add.text(150, 150, 'Intenta de nuevo...', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0);
             }
             
-            this.add.text(300,205,puntajeA+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
-            this.add.text(300,180,puntajeB+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
-            this.add.text(300,230,puntajeC+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
-            this.add.text(300,340,puntajeTotal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
+            this.add.text(300,205,puntajeAfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
+            this.add.text(300,180,puntajeBfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
+            this.add.text(300,230,puntajeCfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
+            this.add.text(300,340,puntajeTotalfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
             b_volver = this.add.image(400,600,'b_volver').setScrollFactor(0).setDepth(10).setInteractive();
             b_volver.on('pointerup',this.volverMenu,this);
             ticketsleft=99;
@@ -897,21 +824,16 @@ class gamescene extends Phaser.Scene {
             F_celdas = [0,0,0,0,0,0];
             alturaPilaPlato = 0;
             alturaPilaTabla = 0;
-            ticket1_lista = [3,5,0,1,2,4];
-            ticket2_lista = [3,5,0,5,0,4];
             puntajeA=0;//fidelidad
             puntajeB=0;//salubridad
             puntajeC=100;//tiempo
-            puntajeTotal = 100;
-            puntajeA1=0;//fidelidad
-            puntajeB1=0;//salubridad
-            puntajeC1=100;//tiempo
-            puntajeTotal1 = 100;
-            puntajeA2=0;//fidelidad
-            puntajeB2=0;//salubridad
-            puntajeC2=100;//tiempo
-            puntajeTotal2 = 100;
-            ticketsleft = 2;
+            puntajeTotal = 0;
+            puntajeAfinal=0;//fidelidad
+            puntajeBfinal=0;//salubridad    
+            puntajeCfinal=100;//tiempo
+            puntajeTotalfinal = 0;
+            
+            
             this.scene.restart();
             this.scene.switch('mainmenu');
         }

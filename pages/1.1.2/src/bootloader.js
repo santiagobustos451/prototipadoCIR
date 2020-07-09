@@ -74,6 +74,7 @@ class Bootloader extends Phaser.Scene {
         this.load.spritesheet('Sp_burger','./assets/sp_burger.png', {frameWidth: 48, frameHeight: 25});
 
         this.load.image('11','./assets/burgerstates/11.png');
+        this.load.image('33','./assets/burgerstates/33.png');
        
 
         this.load.image('hb_bowls','./assets/hb_bowls.png');
@@ -97,12 +98,14 @@ class Bootloader extends Phaser.Scene {
 
         this.load.image('ticket1','./assets/ticket_1.png');
         this.load.image('ticket2','./assets/ticket_2.png');
+        this.load.image('ticket3','./assets/ticket_3.png');
+        this.load.image('ticket4','./assets/ticket_4.png');
+        this.load.image('ticket5','./assets/ticket_5.png');
+        this.load.image('ticket6','./assets/ticket_6.png');
         this.load.image('bg_gamescene','./assets/bg_gamescene.png');
         this.load.image('overlay','./assets/overlay_gamescene.png');
         this.load.image('creditos','./assets/overlay_creditos.png');
         this.load.image('overlay_base','./assets/overlay_generico.png');
-        this.load.image('overlay_1_1','./assets/overlay_ticket1_nivel1.png');
-        this.load.image('overlay_1_2','./assets/overlay_ticket2_nivel1.png');
         this.load.image('overlay_burgerDone','./assets/overlay_burgerdone.png');
         this.load.image('overlay_puntaje','./assets/overlay_puntaje.png');
         this.load.image('overlay_barra','./assets/sombra_barrafregadero.png');
