@@ -624,12 +624,12 @@ class gamescene extends Phaser.Scene {
         }
 
         
-        //si nivel terminado
+        //nivel terminado
         if(ticketsleft==0){
-            puntajeAfinal = puntajeAfinal/ticketsjson.cantTickets
-            puntajeBfinal = puntajeBfinal/ticketsjson.cantTickets
+            puntajeAfinal = Ceilto(puntajeAfinal/ticketsjson.cantTickets)
+            puntajeBfinal = Ceilto(puntajeBfinal/ticketsjson.cantTickets)
             puntajeCfinal = puntajeCfinal
-            puntajeTotalfinal = puntajeTotalfinal/ticketsjson.cantTickets
+            puntajeTotalfinal = Ceilto(puntajeTotalfinal/ticketsjson.cantTickets)
             F_burgerDone=true;
             overlayPuntaje.setDepth(9);
             if(puntajeTotalfinal>70){
