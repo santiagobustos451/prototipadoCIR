@@ -626,10 +626,10 @@ class gamescene extends Phaser.Scene {
         
         //nivel terminado
         if(ticketsleft==0){
-            puntajeAfinal = Phaser.Math.Ceilto(puntajeAfinal/ticketsjson.cantTickets)
-            puntajeBfinal = Phaser.Math.Ceilto(puntajeBfinal/ticketsjson.cantTickets)
+            puntajeAfinal = Phaser.Math.CeilTo(puntajeAfinal/ticketsjson.cantTickets)
+            puntajeBfinal = Phaser.Math.CeilTo(puntajeBfinal/ticketsjson.cantTickets)
             puntajeCfinal = puntajeCfinal
-            puntajeTotalfinal = Phaser.Math.Ceilto(puntajeTotalfinal/ticketsjson.cantTickets)
+            puntajeTotalfinal = Phaser.Math.CeilTo(puntajeTotalfinal/ticketsjson.cantTickets)
             F_burgerDone=true;
             overlayPuntaje.setDepth(9);
             if(puntajeTotalfinal>70){
