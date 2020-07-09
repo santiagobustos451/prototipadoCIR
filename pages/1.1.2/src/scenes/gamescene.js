@@ -338,7 +338,6 @@ class gamescene extends Phaser.Scene {
         ticketsjson = this.cache.json.get('level1');
         ticketsleft = ticketsjson.cantTickets
         tickets = [ticketsjson.ticket_1,ticketsjson.ticket_2,ticketsjson.ticket_3,ticketsjson.ticket_4,ticketsjson.ticket_5,ticketsjson.ticket_6]
-        console.log(F_burgerDone)
         for(var i=0; i<6;i++){
             if(tickets[i].exists == true){
                 comandera[i] = this.add.sprite(265+i*60,110,comanderaNombres[i]).setScrollFactor(0).setDepth(3).setInteractive();
@@ -432,7 +431,7 @@ class gamescene extends Phaser.Scene {
                         this.setDepth(-1);
                         this.setInteractive(false);
                         ticketsleft-=1;
-                        puntajeA = Phaser.Math.CeilTo((puntajeA/12)*100);
+                        puntajeA = Phaser.Math.CeilTo((puntajeA/(6+this.content.length))*100);
                         puntajeB = Phaser.Math.CeilTo((puntajeB)*100);
                         if(puntajeB==0){
                             puntajeTotal = Phaser.Math.CeilTo((8*puntajeA+8*puntajeB+puntajeC)/17);

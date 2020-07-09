@@ -1,5 +1,5 @@
 {
-    "cantTickets":2,
+    "cantTickets":3,
     "ticket_1": {
         "id": "1.",
         "exists": true,
@@ -13,7 +13,7 @@
     "ticket_3": {
         "id": "3.",
         "exists": true,
-        "content": [3,5,0,4]
+        "content": [3,5,4]
     },
     "ticket_4": {
         "id": "4.",
