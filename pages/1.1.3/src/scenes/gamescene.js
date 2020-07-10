@@ -477,6 +477,7 @@ class gamescene extends Phaser.Scene {
                     comandera[i].content = tickets[i].content;
                     comandera[i].on("pointerup",function(){
                         if(!F_burgerDone && !F_selniv && !F_pausa){
+                            this.setDepth(-1);
                             overlayTicket.setInteractive().setDepth(9);
                             textoTicket.setText(this.id).setDepth(10);
                             var separacion = 300/this.content.length;
@@ -536,12 +537,14 @@ class gamescene extends Phaser.Scene {
                                     F_contaminado=true;
                                 }
                                 if(tabla_burgers[c].data.values.ing==5){//5 = hamburguesa
+                                    
                                     if(tabla_burgers[c].data.values.ladoA-3>0){//si se quemo resta puntaje
-                                        puntajeA-=(tabla_burgers[c].data.values.ladoA-3)*2;
+                                    puntajeA-=(tabla_burgers[c].data.values.ladoA-3)*2;
                                     }
                                     if(tabla_burgers[c].data.values.ladoB-3>0){
                                         puntajeA-=(tabla_burgers[c].data.values.ladoB-3)*2;
                                     }
+                                    
                                 }
                             }
                             if(!F_contaminado){//si no está contaminado, se suma puntaje
@@ -563,7 +566,8 @@ class gamescene extends Phaser.Scene {
                             this.setDepth(-1);
                             this.setInteractive(false);
                             ticketsleft-=1;
-                            puntajeA = Phaser.Math.CeilTo((puntajeA/(6+this.content.length))*100);
+                            if(puntajeA>0){puntajeA = Phaser.Math.CeilTo((puntajeA/(6+this.content.length))*100);}
+                            else{puntajeA=0}
                             puntajeB = Phaser.Math.CeilTo((puntajeB)*100);
                             if(puntajeB==0){
                                 puntajeTotal = Phaser.Math.CeilTo((8*puntajeA+8*puntajeB+puntajeC)/17);
@@ -591,6 +595,9 @@ class gamescene extends Phaser.Scene {
                 }
             }
             overlayTicket.on("pointerup",function(){
+                for(var i=0;i<comandera.length;i++){
+                    comandera[i].setDepth(8);
+                }
                 overlayTicket.setDepth(-1);
                 textoTicket.setDepth(-1);
                 for(var i=0;i<dibujoTicket.length;i++){

@@ -3,7 +3,7 @@
     "ticket_1": {
         "id": "1.",
         "exists": true,
-        "content": [3,5,3,5,3,5,4]
+        "content": [3,5,2,5,1,5,0,4]
     },
     "ticket_2": {
         "id": "2.",
