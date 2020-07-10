@@ -10,12 +10,10 @@ var s_plancha;
 var s_win;
 var s_ambiente;
 var bgm_gameplay;
-var bgm_mainmenu;
 
-var planchaConfig = {
-    loop: true,
-    mute: false,
-}
+var F_reseteado = false;
+
+
 
 const burgerstatenames = ['11','12','13','14','15','21','22','23','24','25','31','32','33','34','35','41','42','43','44','45','51','52','53','54','55'];
 var botFregadero; //BOTONERA ESTACIONES
@@ -118,13 +116,12 @@ class gamescene extends Phaser.Scene {
 
         //sonidos
 
-        s_hit = this.sound.add("s_hit");
+        s_hit = this.sound.add("s_hit",{volume:3});
         s_burbujas = this.sound.add("s_burbujas");
         s_plancha = this.sound.add("s_plancha");
         s_win = this.sound.add("s_win");
         s_ambiente = this.sound.add("s_ambiente");
         bgm_gameplay = this.sound.add("bgm_gameplay");
-        bgm_mainmenu = this.sound.add("bgm_mainmenu");
 
         //Selección de nivel
         F_selniv = true
@@ -147,11 +144,10 @@ class gamescene extends Phaser.Scene {
                 F_nivelactual = "level"+this.data.values.nivel;
                 F_generartickets = true;
                 for(var b=0;b<6;b++){
-                    b_nivel[b].setInteractive(false).setDepth(-1);
+                    b_nivel[b].removeInteractive().setDepth(-1);
                     b_niveltexto[b].setDepth(-1);
                     overlayNiveles.setDepth(-1);
                     ticketsjson = mundo.cache.json.get(F_nivelactual);
-                    console.log(ticketsjson)
                     F_selniv = false;
                     
                 }
@@ -487,12 +483,23 @@ class gamescene extends Phaser.Scene {
         barraFregadero = this.add.sprite(center_width,center_height,'anim_barra',0).setAlpha(0).setDepth(1);
         timer = this.time.addEvent({delay:300, callback: this.prog_lavado, callbackScope: this, loop:true});
 
-        s_plancha.play({loop: true});
+        s_plancha.play({loop: true, volume: 0.15,mute: true});
+
+        if(F_reseteado){
+            bgm_gameplay.stop();
+            F_reseteado = false;
+        }
+        
     }
 
 
     
     update (time, delta){
+
+        if(!F_reseteado){
+            bgm_gameplay.play({loop:true,volume:0.125});
+            F_reseteado=true;
+        }
 
         for(var i=0;i<F_celdas.length;i++){
             if(F_celdas[i]==1){
@@ -501,9 +508,16 @@ class gamescene extends Phaser.Scene {
             }
             F_freir = false;
         }
-        
+        if(F_freir){
+            s_plancha.mute = false;
+        }
+        else{
+            s_plancha.mute = true;
+        }        
         // TICKETS 
         if(F_generartickets){
+            bgm_gameplay.volume = 0.25;
+            s_ambiente.play({loop:true,volume:0.25});
             var mundo = this;
             overlayTicket = this.add.image(400,400,'overlay_base').setDepth(-1).setScrollFactor(0);
             textoTicket = this.add.text(275,200,"",{ fontFamily: 'Pacifico', fontSize: 46, color: '#000000' }).setDepth(10).setScrollFactor(0);
@@ -548,6 +562,8 @@ class gamescene extends Phaser.Scene {
                         }
                         else if (F_burgerDone && !F_selniv && !F_pausa){ //determinación de puntaje
                             
+                            this.removeInteractive();
+                            this.active = false;
                             var cantTabla = tabla_burgers.length;
                             var cantTicket = this.content.length;
                             for(var b = 0;b<6;b++){//FIDELIDAD - compara las repeticiones de cada ingrediente en ticket y en hamburguesa armada
@@ -636,7 +652,10 @@ class gamescene extends Phaser.Scene {
             }
             overlayTicket.on("pointerup",function(){
                 for(var i=0;i<comandera.length;i++){
-                    comandera[i].setDepth(8);
+                    if(comandera[i].active){
+                        comandera[i].setDepth(8);
+                    }
+                    
                 }
                 overlayTicket.setDepth(-1);
                 textoTicket.setDepth(-1);
@@ -681,7 +700,8 @@ class gamescene extends Phaser.Scene {
             F_burgerDone=true;
             overlayPuntaje.setDepth(9);
             if(puntajeTotalfinal>70){
-                this.add.text(150, 150, '¡Genial!', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0); 
+                this.add.text(150, 150, '¡Genial!', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0);
+                s_win.play({loop:false});
             }
             else{
                 this.add.text(150, 150, 'Intenta de nuevo...', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0);
@@ -942,9 +962,16 @@ class gamescene extends Phaser.Scene {
             repeticionesA = 0;
             repeticionesB = 0;
             
+            s_plancha.stop();
+            bgm_gameplay.stop();
+            s_ambiente.stop();
             
             this.scene.restart();
             this.scene.switch('mainmenu');
+
+            F_reseteado = true;
+            
+            
         }
     }
 }

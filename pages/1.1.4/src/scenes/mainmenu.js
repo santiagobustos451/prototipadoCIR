@@ -2,6 +2,14 @@ var boton;
 var boton2;
 var boton3;
 var overlay;
+var music;
+var musicConfig = {
+    loop:true,
+    mute:false,
+    volume:1
+}
+var F_volumenbajo = false;
+var F_reseteado = false;
 
 class mainmenu extends Phaser.Scene {
     constructor() {
@@ -9,6 +17,10 @@ class mainmenu extends Phaser.Scene {
     }
 
     create(){
+        music = this.sound.add("bgm_mainmenu");
+        music.play(musicConfig);
+        music.inicio = true;
+
         let center_width = this.sys.game.config.width/2;
         let center_height = this.sys.game.config.height/2;
         
@@ -22,18 +34,43 @@ class mainmenu extends Phaser.Scene {
         overlay = this.add.image(center_width,center_height,'creditos').setDepth(-1).setInteractive();
 
         boton.on('pointerup',function(){
+            music.stop();
+            F_reseteado = true;
+            
+            this.scene.restart();
             this.scene.switch('gamescene');
         },this);
         boton2.on('pointerup',function(){
             this.scene.switch('ayuda');
+            music.volume = 0.5;
         },this);
         boton3.on('pointerup',function(){
             overlay.setDepth(2);
+            music.volume = 0.5;
+            F_volumenbajo=true;
         },this);
         overlay.on('pointerup',function(){       
-            overlay.setDepth(-1);   
+            overlay.setDepth(-1);  
+            F_volumenbajo=false; 
         },this);
+        if(F_reseteado){
+            music.stop();
+            F_reseteado = false;
+        }
     }
+    update(){
+        if(!F_volumenbajo){
+            music.volume = 1;
+        }
+        else{
+            music.volume = 0.5;
+        }
+        if(!F_reseteado){
+            music.play(musicConfig);
+            F_reseteado = true;
+        }
+    }
+        
 }
 
 export default mainmenu;
