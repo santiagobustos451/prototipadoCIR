@@ -162,7 +162,7 @@ class gamescene extends Phaser.Scene {
         //overlay de hamburguesa hecha y boton de basura
 
         overlayBurgerDone = this.add.image(center_width,center_height,'overlay_burgerDone').setDepth(-1).setScrollFactor(0);
-        b_basura = this.add.image(600,110,'b_basura').setDepth(-1).setScrollFactor(0).setInteractive();
+        b_basura = this.add.image(200,110,'b_basura').setDepth(-1).setScrollFactor(0).setInteractive();
         b_basura.on('pointerup',function(){
             if(F_burgerDone && !F_pausa && !F_selniv){
                 var elimina2=tabla_burgers.length;
