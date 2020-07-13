@@ -75,10 +75,8 @@ var hb_fregadero;
 var ingrediente;
 var timer;
 
-
 var comandera = []
 var comanderaNombres = ["ticket1","ticket2","ticket3","ticket4","ticket5","ticket6",]
-
 
 var tickets;
 var ticketsleft;
