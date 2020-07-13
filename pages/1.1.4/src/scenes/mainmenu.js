@@ -1,3 +1,4 @@
+var mundo;
 var boton;
 var boton2;
 var boton3;
@@ -8,6 +9,7 @@ var musicConfig = {
     mute:false,
     volume:1
 }
+var b_mute;
 var F_volumenbajo = false;
 var F_reseteado = false;
 
@@ -17,6 +19,33 @@ class mainmenu extends Phaser.Scene {
     }
 
     create(){
+        mundo = this;
+
+        this.anims.create({
+            key: 'sound_on',
+            frames: [ { key: 'sp_b_mute', frame: 0 } ],
+            frameRate: 20,
+        })
+        this.anims.create({
+            key: 'sound_off',
+            frames: [ { key: 'sp_b_mute', frame: 1 } ],
+            frameRate: 20,
+        })
+
+        b_mute = this.add.sprite(760,760,'sp_b_mute').setScale(0.2).setDepth(10).setInteractive();
+
+        b_mute.on("pointerup",function(){
+            if(!mundo.sound.mute){
+                mundo.sound.mute = true;
+                b_mute.setFrame(1);
+
+            }
+            else{
+                mundo.sound.mute = false;
+                b_mute.setFrame(0);
+            }
+        },this)
+
         music = this.sound.add("bgm_mainmenu");
         music.play(musicConfig);
         music.inicio = true;

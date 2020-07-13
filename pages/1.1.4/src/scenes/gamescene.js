@@ -40,6 +40,7 @@ var indManos;
 var b_continuar; //BOTONES PAUSA Y PUNTAJE
 var b_salir;
 var b_volver;
+var b_mute;
 var ctndr_burgers = [];
 var plato_burgers = [];
 var tabla_burgers = [];
@@ -105,6 +106,31 @@ class gamescene extends Phaser.Scene {
     
     //create
     create (){
+        this.anims.create({
+            key: 'sound_on',
+            frames: [ { key: 'sp_b_mute', frame: 0 } ],
+            frameRate: 20,
+        })
+        this.anims.create({
+            key: 'sound_off',
+            frames: [ { key: 'sp_b_mute', frame: 1 } ],
+            frameRate: 20,
+        })
+
+        b_mute = this.add.sprite(760,760,'sp_b_mute').setScale(0.2).setDepth(10).setInteractive().setScrollFactor(0);
+
+        b_mute.on("pointerup",function(){
+            if(!mundo.sound.mute){
+                mundo.sound.mute = true;
+                b_mute.setFrame(1);
+
+            }
+            else{
+                mundo.sound.mute = false;
+                b_mute.setFrame(0);
+            }
+        },this)
+
 
         //centro de la pantalla
 
@@ -827,7 +853,7 @@ class gamescene extends Phaser.Scene {
 
     clickBurger(){
         
-        if(this.data.values.enplato == true&&estacion==2){
+        if(this.data.values.enplato == true&&estacion==2 && !F_burgerDone){
             
                 this.x=this.x+200
                 this.y = 455-alturaPilaTabla;

@@ -94,6 +94,7 @@ class Bootloader extends Phaser.Scene {
 
         this.load.image('hb_bowls','./assets/hb_bowls.png');
         this.load.image('hb_fregadero','./assets/hb_fregadero.png');
+
         this.load.image('obj_panarriba','./assets/obj_panarriba.png');
         this.load.image('obj_panabajo','./assets/obj_panabajo.png');
         this.load.image('obj_tomate','./assets/obj_tomate.png');
@@ -103,6 +104,8 @@ class Bootloader extends Phaser.Scene {
         this.load.image('Sp_fondo','./assets/fondo.png');
         this.load.image('bg_mainmenu','./assets/bg_menu.png');
         this.load.image('bg_help','./assets/bg_help.png');
+        this.load.image('bg_gamescene','./assets/bg_gamescene.png');
+
         this.load.image('b_jugar','./assets/b_jugar.png');
         this.load.image('b_ayuda','./assets/b_ayuda.png');
         this.load.image('b_creditos','./assets/b_creditos.png');
@@ -118,7 +121,7 @@ class Bootloader extends Phaser.Scene {
         this.load.image('ticket4','./assets/ticket_4.png');
         this.load.image('ticket5','./assets/ticket_5.png');
         this.load.image('ticket6','./assets/ticket_6.png');
-        this.load.image('bg_gamescene','./assets/bg_gamescene.png');
+        
         this.load.image('overlay','./assets/overlay_gamescene.png');
         this.load.image('creditos','./assets/overlay_creditos.png');
         this.load.image('overlay_base','./assets/overlay_generico.png');
@@ -127,6 +130,8 @@ class Bootloader extends Phaser.Scene {
         this.load.image('overlay_barra','./assets/sombra_barrafregadero.png');
         this.load.image('overlay_pausa','./assets/overlay_pausa.png');
         this.load.image('overlay_levelselect','./assets/overlay_levelselect.png');
+
+        this.load.spritesheet('sp_b_mute','./assets/sp_b_mute.png',{frameWidth: 300, frameHeight: 300});
         this.load.spritesheet('sp_b_armado','./assets/sp_b_armado.png',{frameWidth: 224, frameHeight: 75});
         this.load.spritesheet('sp_b_fregadero','./assets/sp_b_fregadero.png',{frameWidth: 224, frameHeight: 75});
         this.load.spritesheet('sp_b_plancha','./assets/sp_b_plancha.png',{frameWidth: 224, frameHeight: 75});
