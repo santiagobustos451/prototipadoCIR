@@ -13,6 +13,7 @@ var s_pedido;
 var s_ambiente;
 var s_ticket;
 var s_basura;
+var s_fregadero;
 var bgm_gameplay;
 
 var F_reseteado = false;
@@ -149,6 +150,7 @@ class gamescene extends Phaser.Scene {
         s_pedido = this.sound.add("s_pedido");
         s_ticket = this.sound.add("s_ticket");
         s_basura = this.sound.add("s_basura");
+        s_fregadero = this.sound.add("s_fregadero");
 
 
         s_ambiente = this.sound.add("s_ambiente");
@@ -188,12 +190,27 @@ class gamescene extends Phaser.Scene {
 
         hb_fregadero = this.add.image(center_width-50,center_height,'hb_fregadero').setDepth(1).setAlpha(0.001).setInteractive();
         hb_fregadero.on('pointerdown',function(){
+            if(!F_manoslimpias){mundo.tweens.add({
+                targets: s_fregadero,
+                volume: 1,
+                duration: 200
+            })}
             F_lavar = true;
         });
         hb_fregadero.on('pointerout',function(){
+            mundo.tweens.add({
+                targets: s_fregadero,
+                volume: 0,
+                duration: 200
+            })
             F_lavar = false;
         });
         hb_fregadero.on('pointerup',function(){
+            mundo.tweens.add({
+                targets: s_fregadero,
+                volume: 0,
+                duration: 200
+            })
             F_lavar = false;
         });
 
@@ -472,6 +489,7 @@ class gamescene extends Phaser.Scene {
         timer = this.time.addEvent({delay:300, callback: this.prog_lavado, callbackScope: this, loop:true});
 
         s_plancha.play({loop: true, volume: 0.15,mute: true});
+        s_fregadero.play({loop: true, volume: 0});
 
         if(F_reseteado){
             bgm_gameplay.stop();
@@ -686,6 +704,11 @@ class gamescene extends Phaser.Scene {
             progresoLav = 0;
         }
         if(progresoLav==9){
+            mundo.tweens.add({
+                targets: s_fregadero,
+                volume: 0,
+                duration: 200
+            })
             s_burbujas.play();
             F_manoslimpias=true;
             progresoLav = 0;
@@ -725,7 +748,7 @@ class gamescene extends Phaser.Scene {
             b_volver = this.add.image(400,570+89,'b_volver').setScrollFactor(0).setDepth(10).setInteractive();
             b_volver.on('pointerup',this.volverMenu,this);
             
-            if(F_nivelactualnum==6 && puntajeTotalfinal>70){
+            if(F_nivelactualnum>6 && puntajeTotalfinal>70){
                 b_siguiente.on('pointerup',this.volverMenu,this);
             }
             else{
@@ -851,18 +874,19 @@ class gamescene extends Phaser.Scene {
 
     clickBurger(){
         
-        if(this.data.values.enplato == true&&estacion==2 && !F_burgerDone){
-            
+        if(this.data.values.enplato == true && this.data.values.lastplato == true && estacion==2 && !F_burgerDone){                
                 this.x=this.x+200
                 this.y = 455-alturaPilaTabla;
                 tabla_burgers.push(this);
                 this.depth=tabla_burgers.length;
                 alturaPilaTabla+=7;
                 this.data.values.enplato = false;
+                this.data.values.lastplato = false;
                 this.data.values.entabla = true;
                 plato_burgers.splice((plato_burgers.length-1),1);
                 if(plato_burgers[plato_burgers.length-1]!=undefined){plato_burgers[plato_burgers.length-1].data.values.lastplato = true;}
                 alturaPilaPlato-=10;
+                s_hit.play();
         }    
         if(!F_burgerAgarrada && this.data.values.enplato == false && this.data.values.entabla == false){
             var b = this.data.values.ladoA;
@@ -898,6 +922,7 @@ class gamescene extends Phaser.Scene {
         this.input.setDraggable(ctndr_burgers[(i-1)],false);
         ctndr_burgers[(i-1)].depth=plato_burgers.length;
         ctndr_burgers[(i-1)].data.values.enplato = true;
+        ctndr_burgers[(i-1)].data.values.lastplato = true;
         if(plato_burgers[plato_burgers.length-1]!=undefined){plato_burgers[plato_burgers.length-1].data.values.lastplato=false;}
         plato_burgers.push(ctndr_burgers[(i-1)]);
         
