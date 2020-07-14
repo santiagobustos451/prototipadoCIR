@@ -119,6 +119,10 @@ class Bootloader extends Phaser.Scene {
         this.load.image('b_salir','./assets/b_salir.png');
         this.load.image('b_nivel','./assets/b_nivel.png');
 
+        this.load.image('b_niveles','./assets/b_niveles.png');
+        this.load.image('b_siguiente','./assets/b_siguiente.png');
+        this.load.image('b_reintentar','./assets/b_reintentar.png');
+
         this.load.image('ticket1','./assets/ticket_1.png');
         this.load.image('ticket2','./assets/ticket_2.png');
         this.load.image('ticket3','./assets/ticket_3.png');
@@ -136,11 +140,12 @@ class Bootloader extends Phaser.Scene {
         this.load.image('overlay_levelselect','./assets/overlay_levelselect.png');
 
         this.load.spritesheet('sp_b_mute','./assets/sp_b_mute.png',{frameWidth: 300, frameHeight: 300});
-        this.load.spritesheet('sp_b_armado','./assets/sp_b_armado.png',{frameWidth: 224, frameHeight: 75});
-        this.load.spritesheet('sp_b_fregadero','./assets/sp_b_fregadero.png',{frameWidth: 224, frameHeight: 75});
-        this.load.spritesheet('sp_b_plancha','./assets/sp_b_plancha.png',{frameWidth: 224, frameHeight: 75});
-        this.load.spritesheet('sp_b_pausa','./assets/sp_b_pausa.png',{frameWidth: 100, frameHeight: 100});
-        this.load.spritesheet('sp_manos','./assets/sp_manos.png',{frameWidth: 134, frameHeight: 134});
+        this.load.spritesheet('sp_b_armado','./assets/sp_b_armado.png',{frameWidth: 244, frameHeight: 95});
+        this.load.spritesheet('sp_b_fregadero','./assets/sp_b_fregadero.png',{frameWidth: 244, frameHeight: 95});
+        this.load.spritesheet('sp_b_plancha','./assets/sp_b_plancha.png',{frameWidth: 244, frameHeight: 95});
+        this.load.spritesheet('sp_b_pausa','./assets/sp_b_pausa.png',{frameWidth: 120, frameHeight: 120});
+        this.load.spritesheet('sp_b_basura','./assets/sp_b_basura.png',{frameWidth: 100, frameHeight: 100});
+        this.load.spritesheet('sp_manos','./assets/sp_manos.png',{frameWidth: 154, frameHeight: 154});
         this.load.spritesheet('sp_barra','./assets/sp_barrafregadero.png',{frameWidth: 450, frameHeight: 250});
     }
     

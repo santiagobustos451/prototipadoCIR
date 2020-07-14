@@ -44,6 +44,8 @@ var indManos;
 var b_continuar; //BOTONES PAUSA Y PUNTAJE
 var b_salir;
 var b_volver;
+var b_siguiente;
+var b_niveles;
 var b_mute;
 var ctndr_burgers = [];
 var plato_burgers = [];
@@ -57,6 +59,7 @@ var F_manoslimpias = true;
 var F_contaminado = false;
 var F_lavar = false;
 var F_nivelactual;
+var F_nivelactualnum;
 var F_generartickets = false;
 var F_freir;
 var progresoLav = 0;
@@ -98,7 +101,7 @@ var puntajeBfinal=0;//salubridad
 var puntajeCfinal=100;//tiempo
 var puntajeTotalfinal = 0;
 
-
+var nivel;
 
 
 var repeticionesA = 0;
@@ -122,18 +125,9 @@ class gamescene extends Phaser.Scene {
 
         //sonidos
 
-        this.anims.create({ //boton mute
-            key: 'sound_on',
-            frames: [ { key: 'sp_b_mute', frame: 0 } ],
-            frameRate: 20,
-        })
-        this.anims.create({
-            key: 'sound_off',
-            frames: [ { key: 'sp_b_mute', frame: 1 } ],
-            frameRate: 20,
-        })
+        //boton mute
 
-        b_mute = this.add.sprite(760,760,'sp_b_mute').setScale(0.2).setDepth(11).setInteractive().setScrollFactor(0);
+        b_mute = this.add.sprite(760,760,'sp_b_mute').setScale(0.2).setDepth(100).setInteractive().setScrollFactor(0);
 
         b_mute.on("pointerup",function(){
             if(!mundo.sound.mute){
@@ -178,16 +172,10 @@ class gamescene extends Phaser.Scene {
 
         for(var i=0;i<6;i++){
             b_nivel[i].on("pointerup",function(){
+                F_nivelactualnum = this.data.values.nivel;
                 F_nivelactual = "level"+this.data.values.nivel;
                 F_generartickets = true;
-                for(var b=0;b<6;b++){
-                    b_nivel[b].removeInteractive().setDepth(-1);
-                    b_niveltexto[b].setDepth(-1);
-                    overlayNiveles.setDepth(-1);
-                    ticketsjson = mundo.cache.json.get(F_nivelactual);
-                    F_selniv = false;
-                    
-                }
+                
             })
         }
 
@@ -220,7 +208,13 @@ class gamescene extends Phaser.Scene {
         //overlay de hamburguesa hecha y boton de basura
 
         overlayBurgerDone = this.add.image(center_width,center_height,'overlay_burgerDone').setDepth(-1).setScrollFactor(0);
-        b_basura = this.add.image(200,110,'b_basura').setDepth(8).setScrollFactor(0).setInteractive();
+        b_basura = this.add.image(180,105,'sp_b_basura').setDepth(8).setScrollFactor(0).setInteractive();
+        b_basura.on('pointerover',function(){
+            b_basura.setFrame(1);
+        })
+        b_basura.on('pointerout',function(){
+            b_basura.setFrame(0);
+        })
         b_basura.on('pointerup',function(){
             if(!F_pausa && !F_selniv && tabla_burgers.length > 0){
                 s_basura.play();
@@ -382,27 +376,15 @@ class gamescene extends Phaser.Scene {
         b_continuar = this.add.image(center_width,center_height-30,'b_continuar').setDepth(-1).setScrollFactor(0).setInteractive();
         b_salir = this.add.image(center_width,center_height+80,'b_salir').setDepth(-1).setScrollFactor(0).setInteractive();
 
-        this.anims.create({
-            key: 'anim_pausa',
-            frames: [ { key: 'sp_b_pausa', frame: 0 } ],
-            frameRate: 20,
-        })
-        this.anims.create({
-            key: 'anim_pausa_over',
-            frames: [ { key: 'sp_b_pausa', frame: 1 } ],
-            frameRate: 20,
-        })
         b_pausa = this.add.sprite(700,100,'sp_b_pausa',0).setInteractive().setDepth(3).setScrollFactor(0);
 
-        b_pausa.on('pointerout',function(){
-            
-            b_pausa.anims.play('anim_pausa');
-            
+        b_pausa.on('pointerout',function(){   
+            b_pausa.setFrame(0);
         },this);
 
         b_pausa.on('pointerover',function(){
             if(!F_pausa && !F_selniv){
-                b_pausa.anims.play('anim_pausa_over');
+                b_pausa.setFrame(1);
             }
 
         },this);
@@ -429,7 +411,7 @@ class gamescene extends Phaser.Scene {
         
 
         //icono manos
-        indManos = this.add.sprite(100,100,'sp_manos',0).setScrollFactor(0).setDepth(3);
+        indManos = this.add.sprite(90,100,'sp_manos',0).setScrollFactor(0).setDepth(3);
         this.anims.create({
             key: 'manos_on',
             frames: [ { key: 'sp_manos', frame: 0 } ],
@@ -451,69 +433,36 @@ class gamescene extends Phaser.Scene {
         botFregadero = this.add.sprite(center_width-250,center_height+250,'sp_b_fregadero').setScrollFactor(0).setInteractive();
         botFregadero.depth = 3;
 
-        this.anims.create({
-            key: 'freg',
-            frames: [ { key: 'sp_b_fregadero', frame: 0 } ],
-            frameRate: 20,
-        });
-        this.anims.create({
-            key: 'freg_active',
-            frames: [ { key: 'sp_b_fregadero', frame: 1 } ],
-            frameRate: 20,
-        });
-
-        botPlancha = this.add.sprite(center_width,center_height+250,'sp_b_plancha').setScrollFactor(0).setInteractive();
+        botPlancha = this.add.sprite(center_width,center_height+250,'sp_b_plancha').setScrollFactor(0).setInteractive().setFrame(1);
         botPlancha.depth = 3;
-
-        this.anims.create({
-            key: 'plan',
-            frames: [ { key: 'sp_b_plancha', frame: 0 } ],
-            frameRate: 20,
-        });
-        this.anims.create({
-            key: 'plan_active',
-            frames: [ { key: 'sp_b_plancha', frame: 1 } ],
-            frameRate: 20,
-        });
-        botPlancha.anims.play('plan_active');
 
         botArmado = this.add.sprite(center_width+250,center_height+250,'sp_b_armado').setScrollFactor(0).setInteractive();
         botArmado.depth = 3;
 
-        this.anims.create({
-            key: 'arma',
-            frames: [ { key: 'sp_b_armado', frame: 0 } ],
-            frameRate: 20,
-        });
-        this.anims.create({
-            key: 'arma_active',
-            frames: [ { key: 'sp_b_armado', frame: 1 } ],
-            frameRate: 20,
-        });
 
         botFregadero.on('pointerup',function(){
             if(!F_burgerDone && !F_selniv && !F_pausa){
-            botArmado.anims.play('arma');
-            botPlancha.anims.play('plan');
-            botFregadero.anims.play('freg_active');
+            botArmado.setFrame(0);
+            botPlancha.setFrame(0);
+            botFregadero.setFrame(1);
             estacion=0;
             cam.pan(center_width,0,150,'Sine.easeInOut');}
         },this)
 
         botPlancha.on('pointerup',function(){
             if(!F_burgerDone && !F_selniv && !F_pausa){
-            botArmado.anims.play('arma');
-            botFregadero.anims.play('freg');
-            botPlancha.anims.play('plan_active');
+            botArmado.setFrame(0);
+            botFregadero.setFrame(0);
+            botPlancha.setFrame(1);
             estacion=1;
             cam.pan(center_width+550,0,150,'Sine.easeInOut');}
         },this)
 
         botArmado.on('pointerup',function(){
             if(!F_burgerDone && !F_selniv && !F_pausa){
-            botPlancha.anims.play('plan');
-            botFregadero.anims.play('freg');
-            botArmado.anims.play('arma_active');
+            botPlancha.setFrame(0);
+            botFregadero.setFrame(0);
+            botArmado.setFrame(1);
             estacion=2;
             cam.pan(center_width+1100,0,150,'Sine.easeInOut');}
         },this)
@@ -534,6 +483,7 @@ class gamescene extends Phaser.Scene {
 
     
     update (time, delta){
+        mundo = this
 
         if(this.sound.mute){
             b_mute.setFrame(1);
@@ -559,6 +509,17 @@ class gamescene extends Phaser.Scene {
         }        
         // TICKETS 
         if(F_generartickets){
+
+            for(var b=0;b<6;b++){
+                b_nivel[b].removeInteractive().setDepth(-1);
+                b_niveltexto[b].setDepth(-1);
+                overlayNiveles.setDepth(-1);
+            }
+
+            ticketsjson = mundo.cache.json.get(F_nivelactual);
+            console.log(ticketsjson)
+            F_selniv = false;
+
             bgm_gameplay.volume = 0.25;
             s_ambiente.play({loop:true,volume:0.25});
             var mundo = this;
@@ -747,19 +708,33 @@ class gamescene extends Phaser.Scene {
             overlayPuntaje.setDepth(9);
             if(puntajeTotalfinal>70){
                 this.add.text(150, 150, '¡Genial!', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0);
-                s_win.play({loop:false});
+                s_win.play();
+                b_siguiente = this.add.image(510,570,'b_siguiente').setScrollFactor(0).setDepth(10).setInteractive();
+                F_nivelactualnum++; 
             }
             else{
                 this.add.text(150, 150, 'Intenta de nuevo...', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0);
                 s_lose.play();
+                b_siguiente = this.add.image(510,570,'b_reintentar').setScrollFactor(0).setDepth(10).setInteractive();
             }
             
             this.add.text(300,205,puntajeAfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
             this.add.text(300,180,puntajeBfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
             this.add.text(300,230,puntajeCfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
             this.add.text(300,340,puntajeTotalfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
-            b_volver = this.add.image(400,600,'b_volver').setScrollFactor(0).setDepth(10).setInteractive();
+            b_volver = this.add.image(400,570+89,'b_volver').setScrollFactor(0).setDepth(10).setInteractive();
             b_volver.on('pointerup',this.volverMenu,this);
+            
+            if(F_nivelactualnum==6 && puntajeTotalfinal>70){
+                b_siguiente.on('pointerup',this.volverMenu,this);
+            }
+            else{
+                b_siguiente.on('pointerup',this.changelevel,this);
+            }
+            
+            
+            b_niveles = this.add.image(290,570,'b_niveles').setScrollFactor(0).setDepth(10).setInteractive();
+            b_niveles.on('pointerup',this.levelselect,this);
             ticketsleft=99;
         }
 
@@ -1020,6 +995,67 @@ class gamescene extends Phaser.Scene {
             
             
         }
+    }
+    levelselect(){
+        if(F_burgerDone || F_pausa || F_selniv){
+            
+            estacion=1;//ESTACION ACTUAL 0 = lavado, 1 = cocina, 2 = armado
+            dibujoTicket = [];
+            b_nivel = [];
+            b_niveltexto = [];
+            ctndr_burgers = [];
+            plato_burgers = [];
+            tabla_burgers = [];
+            F_burgerCrear = false; //BANDERAS
+            F_burgerAgarrada = true;
+            F_burgerDone = false;
+            F_pausa = false;
+            F_selniv = false;
+            F_manoslimpias = true;
+            F_contaminado = false;
+            F_lavar = false;
+            F_generartickets = false;
+            celdasX = [205,320,440,205,320,440];//centros de cada celda
+            celdasY = [400,400,400,480,480,480];
+            limitesCeldasX1 = [140,260,380,140,260,380];//límites de cada celda
+            limitesCeldasX2 = [260,380,500,260,380,500];
+            limitesCeldasY1 = [360,360,360,440,440,440];
+            limitesCeldasY2 = [440,440,440,520,520,520];
+            F_celdas = [0,0,0,0,0,0];
+            alturaPilaPlato = 0;
+            alturaPilaTabla = 0;
+            comandera = []
+            comanderaNombres = ["ticket1","ticket2","ticket3","ticket4","ticket5","ticket6",]
+            puntajeA=0;//fidelidad
+            puntajeB=0;//salubridad
+            puntajeC=100;//tiempo
+            puntajeTotal = 100;
+            puntajeAfinal=0;//fidelidad
+            puntajeBfinal=0;//salubridad
+            puntajeCfinal=100;//tiempo
+            puntajeTotalfinal = 0;
+            repeticionesA = 0;
+            repeticionesB = 0;
+            
+            s_plancha.stop();
+            bgm_gameplay.stop();
+            s_ambiente.stop();
+            
+            this.scene.restart();
+
+            F_reseteado = true;
+
+            
+            
+            
+        }
+
+    }
+    changelevel(){
+        this.levelselect();
+        F_nivelactual = "level"+F_nivelactualnum;
+        F_generartickets = true;
+            
     }
 }
 
