@@ -8,7 +8,11 @@ var s_hit;
 var s_burbujas;
 var s_plancha;
 var s_win;
+var s_lose;
+var s_pedido;
 var s_ambiente;
+var s_ticket;
+var s_basura;
 var bgm_gameplay;
 
 var F_reseteado = false;
@@ -75,6 +79,7 @@ var hb_panarriba;
 var hb_fregadero;
 var ingrediente;
 var timer;
+var mundo;
 
 var comandera = []
 var comanderaNombres = ["ticket1","ticket2","ticket3","ticket4","ticket5","ticket6",]
@@ -106,7 +111,18 @@ class gamescene extends Phaser.Scene {
     
     //create
     create (){
-        this.anims.create({
+        
+
+
+        //centro de la pantalla
+
+        mundo = this;
+        let center_width = this.sys.game.config.width/2;
+        let center_height = this.sys.game.config.height/2;
+
+        //sonidos
+
+        this.anims.create({ //boton mute
             key: 'sound_on',
             frames: [ { key: 'sp_b_mute', frame: 0 } ],
             frameRate: 20,
@@ -117,7 +133,7 @@ class gamescene extends Phaser.Scene {
             frameRate: 20,
         })
 
-        b_mute = this.add.sprite(760,760,'sp_b_mute').setScale(0.2).setDepth(10).setInteractive().setScrollFactor(0);
+        b_mute = this.add.sprite(760,760,'sp_b_mute').setScale(0.2).setDepth(11).setInteractive().setScrollFactor(0);
 
         b_mute.on("pointerup",function(){
             if(!mundo.sound.mute){
@@ -131,19 +147,16 @@ class gamescene extends Phaser.Scene {
             }
         },this)
 
-
-        //centro de la pantalla
-
-        var mundo = this;
-        let center_width = this.sys.game.config.width/2;
-        let center_height = this.sys.game.config.height/2;
-
-        //sonidos
-
-        s_hit = this.sound.add("s_hit",{volume:3});
+        s_hit = this.sound.add("s_hit",{volume:10});
         s_burbujas = this.sound.add("s_burbujas");
         s_plancha = this.sound.add("s_plancha");
         s_win = this.sound.add("s_win");
+        s_lose = this.sound.add("s_lose");
+        s_pedido = this.sound.add("s_pedido");
+        s_ticket = this.sound.add("s_ticket");
+        s_basura = this.sound.add("s_basura");
+
+
         s_ambiente = this.sound.add("s_ambiente");
         bgm_gameplay = this.sound.add("bgm_gameplay");
 
@@ -207,16 +220,18 @@ class gamescene extends Phaser.Scene {
         //overlay de hamburguesa hecha y boton de basura
 
         overlayBurgerDone = this.add.image(center_width,center_height,'overlay_burgerDone').setDepth(-1).setScrollFactor(0);
-        b_basura = this.add.image(200,110,'b_basura').setDepth(-1).setScrollFactor(0).setInteractive();
+        b_basura = this.add.image(200,110,'b_basura').setDepth(8).setScrollFactor(0).setInteractive();
         b_basura.on('pointerup',function(){
-            if(F_burgerDone && !F_pausa && !F_selniv){
+            if(!F_pausa && !F_selniv && tabla_burgers.length > 0){
+                s_basura.play();
+                alturaPilaTabla = 0
                 var elimina2=tabla_burgers.length;
                 for(var a=0;a<elimina2;a++){
                     tabla_burgers[0].x = 5000;
                     tabla_burgers.splice(0,1);
                     F_burgerDone=false;
                     overlayBurgerDone.setDepth(-1);
-                    b_basura.setDepth(-1);
+                    //b_basura.setDepth(-1);
                 }
             }
         },this)
@@ -285,7 +300,7 @@ class gamescene extends Phaser.Scene {
                 //pan de arriba señala que la hamburguesa se termino de armar
                 F_burgerDone = true;
                 overlayBurgerDone.setDepth(9);
-                b_basura.setDepth(10);
+                b_basura.setDepth(8);
             }
         },this);
 
@@ -520,6 +535,10 @@ class gamescene extends Phaser.Scene {
     
     update (time, delta){
 
+        if(this.sound.mute){
+            b_mute.setFrame(1);
+        }
+
         if(!F_reseteado){
             bgm_gameplay.play({loop:true,volume:0.125});
             F_reseteado=true;
@@ -555,6 +574,7 @@ class gamescene extends Phaser.Scene {
                     comandera[i].content = tickets[i].content;
                     comandera[i].on("pointerup",function(){
                         if(!F_burgerDone && !F_selniv && !F_pausa){
+                            s_ticket.play();
                             this.setDepth(-1);
                             overlayTicket.setInteractive().setDepth(9);
                             textoTicket.setText(this.id).setDepth(10);
@@ -585,7 +605,9 @@ class gamescene extends Phaser.Scene {
                             }
                         }
                         else if (F_burgerDone && !F_selniv && !F_pausa){ //determinación de puntaje
-                            
+
+
+                            s_pedido.play();
                             this.removeInteractive();
                             this.active = false;
                             var cantTabla = tabla_burgers.length;
@@ -642,7 +664,7 @@ class gamescene extends Phaser.Scene {
                             
                             F_burgerDone=false;
                             overlayBurgerDone.setDepth(-1);
-                            b_basura.setDepth(-1);
+                            //b_basura.setDepth(-1);
                             this.setDepth(-1);
                             this.setInteractive(false);
                             ticketsleft-=1;
@@ -729,6 +751,7 @@ class gamescene extends Phaser.Scene {
             }
             else{
                 this.add.text(150, 150, 'Intenta de nuevo...', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0);
+                s_lose.play();
             }
             
             this.add.text(300,205,puntajeAfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);

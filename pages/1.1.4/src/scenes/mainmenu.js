@@ -32,7 +32,11 @@ class mainmenu extends Phaser.Scene {
             frameRate: 20,
         })
 
+        
         b_mute = this.add.sprite(760,760,'sp_b_mute').setScale(0.2).setDepth(10).setInteractive();
+        if(mundo.sound.mute){
+            b_mute.setFrame(1);
+        }
 
         b_mute.on("pointerup",function(){
             if(!mundo.sound.mute){
@@ -97,6 +101,9 @@ class mainmenu extends Phaser.Scene {
         if(!F_reseteado){
             music.play(musicConfig);
             F_reseteado = true;
+        }
+        if(mundo.sound.mute){
+            b_mute.setFrame(1);
         }
     }
         
