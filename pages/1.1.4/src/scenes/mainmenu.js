@@ -9,6 +9,9 @@ var musicConfig = {
     mute:false,
     volume:1
 }
+
+var s_muteclick;
+var s_click;
 var b_mute;
 var F_volumenbajo = false;
 var F_reseteado = false;
@@ -20,18 +23,9 @@ class mainmenu extends Phaser.Scene {
 
     create(){
         mundo = this;
-
-        this.anims.create({
-            key: 'sound_on',
-            frames: [ { key: 'sp_b_mute', frame: 0 } ],
-            frameRate: 20,
-        })
-        this.anims.create({
-            key: 'sound_off',
-            frames: [ { key: 'sp_b_mute', frame: 1 } ],
-            frameRate: 20,
-        })
-
+        s_muteclick = this.sound.add("s_click");
+        s_click = this.sound.add("s_click");
+        
         
         b_mute = this.add.sprite(760,760,'sp_b_mute').setScale(0.2).setDepth(10).setInteractive();
         if(mundo.sound.mute){
@@ -39,6 +33,10 @@ class mainmenu extends Phaser.Scene {
         }
 
         b_mute.on("pointerup",function(){
+            s_muteclick.play();
+        },this)
+
+        s_muteclick.on("complete",function(){
             if(!mundo.sound.mute){
                 mundo.sound.mute = true;
                 b_mute.setFrame(1);
@@ -46,6 +44,7 @@ class mainmenu extends Phaser.Scene {
             }
             else{
                 mundo.sound.mute = false;
+                s_click.play();
                 b_mute.setFrame(0);
             }
         },this)
@@ -67,6 +66,7 @@ class mainmenu extends Phaser.Scene {
         overlay = this.add.image(center_width,center_height,'creditos').setDepth(-1).setInteractive();
 
         boton.on('pointerup',function(){
+            s_click.play();
             music.stop();
             F_reseteado = true;
             
@@ -74,15 +74,18 @@ class mainmenu extends Phaser.Scene {
             this.scene.switch('gamescene');
         },this);
         boton2.on('pointerup',function(){
+            s_click.play();
             this.scene.switch('ayuda');
             music.volume = 0.5;
         },this);
         boton3.on('pointerup',function(){
+            s_click.play();
             overlay.setDepth(2);
             music.volume = 0.5;
             F_volumenbajo=true;
         },this);
-        overlay.on('pointerup',function(){       
+        overlay.on('pointerup',function(){ 
+            s_click.play();      
             overlay.setDepth(-1);  
             F_volumenbajo=false; 
         },this);
@@ -105,6 +108,9 @@ class mainmenu extends Phaser.Scene {
         if(mundo.sound.mute){
             b_mute.setFrame(1);
         }
+    }
+    mute(){
+        mundo.sound.mute = true;
     }
         
 }

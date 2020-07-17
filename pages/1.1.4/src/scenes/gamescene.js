@@ -13,6 +13,8 @@ var s_pedido;
 var s_ambiente;
 var s_ticket;
 var s_basura;
+var s_click;
+var s_muteclick;
 var s_fregadero;
 var bgm_gameplay;
 
@@ -126,21 +128,7 @@ class gamescene extends Phaser.Scene {
 
         //sonidos
 
-        //boton mute
-
-        b_mute = this.add.sprite(760,760,'sp_b_mute').setScale(0.2).setDepth(100).setInteractive().setScrollFactor(0);
-
-        b_mute.on("pointerup",function(){
-            if(!mundo.sound.mute){
-                mundo.sound.mute = true;
-                b_mute.setFrame(1);
-
-            }
-            else{
-                mundo.sound.mute = false;
-                b_mute.setFrame(0);
-            }
-        },this)
+        
 
         s_hit = this.sound.add("s_hit",{volume:10});
         s_burbujas = this.sound.add("s_burbujas");
@@ -151,7 +139,29 @@ class gamescene extends Phaser.Scene {
         s_ticket = this.sound.add("s_ticket");
         s_basura = this.sound.add("s_basura");
         s_fregadero = this.sound.add("s_fregadero");
+        s_click = this.sound.add("s_click");
+        s_muteclick = this.sound.add("s_click");
 
+        //boton mute
+
+        b_mute = this.add.sprite(760,760,'sp_b_mute').setScale(0.2).setDepth(100).setInteractive().setScrollFactor(0);
+
+        b_mute.on("pointerup",function(){
+            s_muteclick.play();
+        },this)
+
+        s_muteclick.on("complete",function(){
+            if(!mundo.sound.mute){
+                mundo.sound.mute = true;
+                b_mute.setFrame(1);
+
+            }
+            else{
+                mundo.sound.mute = false;
+                s_click.play();
+                b_mute.setFrame(0);
+            }
+        },this)
 
         s_ambiente = this.sound.add("s_ambiente");
         bgm_gameplay = this.sound.add("bgm_gameplay");
@@ -174,10 +184,10 @@ class gamescene extends Phaser.Scene {
 
         for(var i=0;i<6;i++){
             b_nivel[i].on("pointerup",function(){
+                s_click.play();
                 F_nivelactualnum = this.data.values.nivel;
                 F_nivelactual = "level"+this.data.values.nivel;
                 F_generartickets = true;
-                
             })
         }
 
@@ -406,6 +416,7 @@ class gamescene extends Phaser.Scene {
 
         },this);
         b_pausa.on('pointerup',function(){
+            s_click.play();
             if(!F_selniv){
             overlayPausa.setDepth(99);
             b_continuar.setDepth(99);
@@ -415,12 +426,14 @@ class gamescene extends Phaser.Scene {
             }
         },this);
         b_continuar.on('pointerup',function(){
+            s_click.play();
             overlayPausa.setDepth(-1);
             b_continuar.setDepth(-1);
             b_salir.setDepth(-1);
             F_pausa = false;
         },this);
         b_salir.on('pointerup',function(){
+            s_click.play();
             if(F_pausa){
                 this.volverMenu();
             }
@@ -714,10 +727,10 @@ class gamescene extends Phaser.Scene {
             progresoLav = 0;
         }
         if(F_manoslimpias){
-            indManos.anims.play('manos_on');
+            indManos.setFrame(0);
         }
         else{
-            indManos.anims.play('manos_off');
+            indManos.setFrame(1);
         }
 
         
@@ -970,7 +983,7 @@ class gamescene extends Phaser.Scene {
     }
     volverMenu(){
         if(F_burgerDone || F_pausa || F_selniv){
-            
+            s_click.play();
             estacion=1;//ESTACION ACTUAL 0 = lavado, 1 = cocina, 2 = armado
             dibujoTicket = [];
             b_nivel = [];
@@ -1023,7 +1036,7 @@ class gamescene extends Phaser.Scene {
     }
     levelselect(){
         if(F_burgerDone || F_pausa || F_selniv){
-            
+            s_click.play();
             estacion=1;//ESTACION ACTUAL 0 = lavado, 1 = cocina, 2 = armado
             dibujoTicket = [];
             b_nivel = [];
