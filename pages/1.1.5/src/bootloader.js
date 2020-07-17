@@ -68,6 +68,7 @@ class Bootloader extends Phaser.Scene {
 
     
         //hacer acá abajo el preload
+
         this.load.audio("s_ambiente","./assets/audio/ambience_gameplay.mp3");
         this.load.audio("s_burbujas","./assets/audio/sfx_burbujas.mp3");
         this.load.audio("s_hit","./assets/audio/sfx_hit.mp3");
@@ -91,6 +92,7 @@ class Bootloader extends Phaser.Scene {
 
         this.load.spritesheet('Sp_freezer','./assets/sp_freezer.png', {frameWidth: 222, frameHeight: 327});
         this.load.spritesheet('Sp_burger','./assets/sp_burger.png', {frameWidth: 48, frameHeight: 25});
+        this.load.spritesheet('Sp_levelsign','./assets/sp_levelsign.png',{frameWidth: 2000, frameHeight: 700});
 
         this.load.image('11','./assets/burgerstates/11.png');
         this.load.image('33','./assets/burgerstates/33.png');

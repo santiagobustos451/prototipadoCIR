@@ -91,6 +91,7 @@ var comandera = []
 var comanderaNombres = ["ticket1","ticket2","ticket3","ticket4","ticket5","ticket6",]
 
 var tickets;
+var tickets_shuffle = [];
 var ticketsleft;
 var ticketsjson;
 
@@ -416,16 +417,22 @@ class gamescene extends Phaser.Scene {
 
         },this);
         b_pausa.on('pointerup',function(){
+            for(var i=0;i<comandera.length;i++){
+                comandera[i].timer.paused = true;
+            }
             s_click.play();
             if(!F_selniv){
             overlayPausa.setDepth(99);
             b_continuar.setDepth(99);
             b_salir.setDepth(99);
-            b_pausa.anims.play('anim_pausa');
+            b_pausa.setFrame(0);
             F_pausa = true;
             }
         },this);
         b_continuar.on('pointerup',function(){
+            for(var i=0;i<comandera.length;i++){
+                comandera[i].timer.paused = false;
+            }
             s_click.play();
             overlayPausa.setDepth(-1);
             b_continuar.setDepth(-1);
@@ -472,29 +479,35 @@ class gamescene extends Phaser.Scene {
 
         botFregadero.on('pointerup',function(){
             if(!F_burgerDone && !F_selniv && !F_pausa){
-            botArmado.setFrame(0);
-            botPlancha.setFrame(0);
-            botFregadero.setFrame(1);
-            estacion=0;
-            cam.pan(center_width,0,150,'Sine.easeInOut');}
+                s_click.play();
+                botArmado.setFrame(0);
+                botPlancha.setFrame(0);
+                botFregadero.setFrame(1);
+                estacion=0;
+                cam.pan(center_width,0,150,'Sine.easeInOut');
+            }
         },this)
 
         botPlancha.on('pointerup',function(){
             if(!F_burgerDone && !F_selniv && !F_pausa){
-            botArmado.setFrame(0);
-            botFregadero.setFrame(0);
-            botPlancha.setFrame(1);
-            estacion=1;
-            cam.pan(center_width+550,0,150,'Sine.easeInOut');}
+                s_click.play();
+                botArmado.setFrame(0);
+                botFregadero.setFrame(0);
+                botPlancha.setFrame(1);
+                estacion=1;
+                cam.pan(center_width+550,0,150,'Sine.easeInOut');
+            }
         },this)
 
         botArmado.on('pointerup',function(){
             if(!F_burgerDone && !F_selniv && !F_pausa){
-            botPlancha.setFrame(0);
-            botFregadero.setFrame(0);
-            botArmado.setFrame(1);
-            estacion=2;
-            cam.pan(center_width+1100,0,150,'Sine.easeInOut');}
+                s_click.play();
+                botPlancha.setFrame(0);
+                botFregadero.setFrame(0);
+                botArmado.setFrame(1);
+                estacion=2;
+                cam.pan(center_width+1100,0,150,'Sine.easeInOut');
+            }
         },this)
 
         overlaySombra = this.add.image(center_width,center_height,'overlay_barra').setAlpha(0).setDepth(1);
@@ -548,7 +561,6 @@ class gamescene extends Phaser.Scene {
             }
 
             ticketsjson = mundo.cache.json.get(F_nivelactual);
-            console.log(ticketsjson)
             F_selniv = false;
 
             bgm_gameplay.volume = 0.25;
@@ -556,14 +568,19 @@ class gamescene extends Phaser.Scene {
             var mundo = this;
             overlayTicket = this.add.image(400,400,'overlay_base').setDepth(-1).setScrollFactor(0);
             textoTicket = this.add.text(275,200,"",{ fontFamily: 'Pacifico', fontSize: 46, color: '#000000' }).setDepth(10).setScrollFactor(0);
-            console.log(F_nivelactual)
             ticketsleft = ticketsjson.cantTickets
             tickets = [ticketsjson.ticket_1,ticketsjson.ticket_2,ticketsjson.ticket_3,ticketsjson.ticket_4,ticketsjson.ticket_5,ticketsjson.ticket_6]
+            for(var i=0;i<tickets.length;i++){
+                if(tickets[i].exists){
+                    tickets_shuffle.push(tickets[i])
+                }
+            }
+            tickets_shuffle.sort(() => Math.random() - 0.5);
             for(var i=0; i<6;i++){
                 if(tickets[i].exists == true){
                     comandera[i] = this.add.sprite(265+i*60,110,comanderaNombres[i]).setScrollFactor(0).setDepth(3).setInteractive();
                     comandera[i].id = tickets[i].id;
-                    comandera[i].content = tickets[i].content;
+                    comandera[i].content = tickets_shuffle[i].content;
                     comandera[i].on("pointerup",function(){
                         if(!F_burgerDone && !F_selniv && !F_pausa){
                             s_ticket.play();
@@ -688,6 +705,16 @@ class gamescene extends Phaser.Scene {
                     });
                 }
             }
+            for(var i=0;i<comandera.length;i++){
+                comandera[i].setDepth(-1).disableInteractive();
+                comandera[i].active=false;
+                comandera[i].timer = this.time.addEvent({delay:Phaser.Math.Between(15000,21000)*i, callback: function(){
+                    s_pedido.play({volume:0.25});
+                    this.setDepth(3).setInteractive();
+                    this.active = true;
+                }, callbackScope: comandera[i], loop:false});
+            }
+            console.log(comandera);
             overlayTicket.on("pointerup",function(){
                 for(var i=0;i<comandera.length;i++){
                     if(comandera[i].active){
@@ -702,6 +729,23 @@ class gamescene extends Phaser.Scene {
                 }
                 
             },this);
+            var levelsign = this.add.sprite(400,400,'Sp_levelsign').setScale(0.25).setDepth(99).setScrollFactor(0).setAlpha(0);
+            levelsign.setFrame(F_nivelactualnum-1);
+            var tween = mundo.tweens.add({
+                targets: levelsign,
+                alpha: 1,
+                duration: 400
+            });
+            tween.on("complete", function(){
+                var signtimer = mundo.time.addEvent({delay:1200, callback: function(){
+                    mundo.tweens.add({
+                        targets: levelsign,
+                        alpha: 0,
+                        duration: 400
+                    });
+                }, callbackScope: comandera[i], loop:false})  
+            })
+
             F_generartickets = false;
         }
 
@@ -738,7 +782,7 @@ class gamescene extends Phaser.Scene {
         if(ticketsleft==0){
             puntajeAfinal = Phaser.Math.CeilTo(puntajeAfinal/ticketsjson.cantTickets)
             puntajeBfinal = Phaser.Math.CeilTo(puntajeBfinal/ticketsjson.cantTickets)
-            puntajeCfinal = puntajeCfinal
+            puntajeCfinal = puntajeCfinal;
             puntajeTotalfinal = Phaser.Math.CeilTo(puntajeTotalfinal/ticketsjson.cantTickets)
             F_burgerDone=true;
             overlayPuntaje.setDepth(9);
@@ -985,6 +1029,7 @@ class gamescene extends Phaser.Scene {
         if(F_burgerDone || F_pausa || F_selniv){
             s_click.play();
             estacion=1;//ESTACION ACTUAL 0 = lavado, 1 = cocina, 2 = armado
+            tickets_shuffle = [];
             dibujoTicket = [];
             b_nivel = [];
             b_niveltexto = [];
@@ -1039,6 +1084,7 @@ class gamescene extends Phaser.Scene {
             s_click.play();
             estacion=1;//ESTACION ACTUAL 0 = lavado, 1 = cocina, 2 = armado
             dibujoTicket = [];
+            tickets_shuffle = [];
             b_nivel = [];
             b_niveltexto = [];
             ctndr_burgers = [];
@@ -1095,6 +1141,7 @@ class gamescene extends Phaser.Scene {
         F_generartickets = true;
             
     }
+    
 }
 
 
