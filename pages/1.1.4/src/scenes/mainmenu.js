@@ -63,7 +63,7 @@ class mainmenu extends Phaser.Scene {
         boton = this.add.sprite(center_width,center_height+150,'b_jugar').setInteractive();
         boton2 = this.add.sprite(center_width,center_height+250,'b_ayuda').setInteractive();
         boton3 = this.add.sprite(center_width,center_height+350,'b_creditos').setInteractive();
-        overlay = this.add.image(center_width,center_height,'creditos').setDepth(-1).setInteractive();
+        overlay = this.add.image(center_width,center_height,'creditos').setDepth(-1);
 
         boton.on('pointerup',function(){
             s_click.play();
@@ -81,11 +81,13 @@ class mainmenu extends Phaser.Scene {
         boton3.on('pointerup',function(){
             s_click.play();
             overlay.setDepth(2);
+            overlay.setInteractive();
             music.volume = 0.5;
             F_volumenbajo=true;
         },this);
         overlay.on('pointerup',function(){ 
-            s_click.play();      
+            s_click.play();
+            overlay.disableInteractive();      
             overlay.setDepth(-1);  
             F_volumenbajo=false; 
         },this);
