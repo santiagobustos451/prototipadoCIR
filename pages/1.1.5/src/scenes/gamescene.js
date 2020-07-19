@@ -106,8 +106,8 @@ var puntajeCfinal=100;//tiempo
 var puntajeTotalfinal = 0;
 
 var nivel;
-var leveltimer;
-
+var elapsedTime;
+var levelTimer;
 
 var repeticionesA = 0;
 var repeticionesB = 0;
@@ -418,6 +418,7 @@ class gamescene extends Phaser.Scene {
 
         },this);
         b_pausa.on('pointerup',function(){
+            levelTimer.paused = true;
             bgm_gameplay.volume = bgm_gameplay.volume*0.5;
             for(var i=0;i<comandera.length;i++){
                 comandera[i].timer.paused = true;
@@ -432,6 +433,7 @@ class gamescene extends Phaser.Scene {
             }
         },this);
         b_continuar.on('pointerup',function(){
+            levelTimer.paused = false;
             bgm_gameplay.volume = bgm_gameplay.volume*2;
             for(var i=0;i<comandera.length;i++){
                 comandera[i].timer.paused = false;
@@ -556,6 +558,11 @@ class gamescene extends Phaser.Scene {
         }        
         // TICKETS 
         if(F_generartickets){
+
+            levelTimer = this.time.addEvent({
+                delay: Infinity,                // ms
+                callback: null,
+            });
 
             for(var b=0;b<6;b++){
                 b_nivel[b].removeInteractive().setDepth(-1);
@@ -711,7 +718,7 @@ class gamescene extends Phaser.Scene {
             for(var i=0;i<comandera.length;i++){
                 comandera[i].setDepth(-1).disableInteractive();
                 comandera[i].active=false;
-                comandera[i].timer = this.time.addEvent({delay:Phaser.Math.Between(10000,15000)*i, callback: function(){
+                comandera[i].timer = this.time.addEvent({delay:Phaser.Math.Between(100,200)*i, callback: function(){
                     s_pedido.play({volume:0.25});
                     this.setDepth(3).setInteractive();
                     this.active = true;
@@ -783,7 +790,10 @@ class gamescene extends Phaser.Scene {
         
         //nivel terminado
         if(ticketsleft==0){
-            
+
+            elapsedTime = levelTimer.getElapsedSeconds();
+            console.log(elapsedTime);
+
             puntajeAfinal = Phaser.Math.CeilTo(puntajeAfinal/ticketsjson.cantTickets)
             puntajeBfinal = Phaser.Math.CeilTo(puntajeBfinal/ticketsjson.cantTickets)
             puntajeCfinal = puntajeCfinal;
