@@ -106,6 +106,7 @@ var puntajeCfinal=100;//tiempo
 var puntajeTotalfinal = 0;
 
 var nivel;
+var leveltimer;
 
 
 var repeticionesA = 0;
@@ -170,17 +171,17 @@ class gamescene extends Phaser.Scene {
         //Selección de nivel
         F_selniv = true
         overlayNiveles = this.add.image(400,400,"overlay_levelselect").setDepth(10).setScrollFactor(0);
-        b_niveltexto[0] = this.add.text(190,265+50,"1",{ fontFamily: 'Pacifico', fontSize: 46, color: '#000000' }).setDepth(11).setScrollFactor(0);
+        b_niveltexto[0] = this.add.text(190,265+50,"1",{ fontFamily: 'Pacifico', fontSize: 46, color: '#ffffff' }).setDepth(11).setScrollFactor(0).setShadow(2, 2, "#000000", 2, true, true);;
         b_nivel[0] = this.add.image(200,300+50,"b_nivel").setInteractive().setDepth(10).setScrollFactor(0).setScale(0.25).setData({nivel:1});
-        b_niveltexto[1] = this.add.text(390,265+50,"2",{ fontFamily: 'Pacifico', fontSize: 46, color: '#000000' }).setDepth(11).setScrollFactor(0);
+        b_niveltexto[1] = this.add.text(390,265+50,"2",{ fontFamily: 'Pacifico', fontSize: 46, color: '#ffffff' }).setDepth(11).setScrollFactor(0).setShadow(2, 2, "#000000", 2, true, true);;
         b_nivel[1] = this.add.image(400,300+50,"b_nivel").setInteractive().setDepth(10).setScrollFactor(0).setScale(0.25).setData({nivel:2});
-        b_niveltexto[2] = this.add.text(590,265+50,"3",{ fontFamily: 'Pacifico', fontSize: 46, color: '#000000' }).setDepth(11).setScrollFactor(0);
+        b_niveltexto[2] = this.add.text(590,265+50,"3",{ fontFamily: 'Pacifico', fontSize: 46, color: '#ffffff' }).setDepth(11).setScrollFactor(0).setShadow(2, 2, "#000000", 2, true, true);;
         b_nivel[2] = this.add.image(600,300+50,"b_nivel").setInteractive().setDepth(10).setScrollFactor(0).setScale(0.25).setData({nivel:3});
-        b_niveltexto[3] = this.add.text(190,465+50,"4",{ fontFamily: 'Pacifico', fontSize: 46, color: '#000000' }).setDepth(11).setScrollFactor(0);
+        b_niveltexto[3] = this.add.text(190,465+50,"4",{ fontFamily: 'Pacifico', fontSize: 46, color: '#ffffff' }).setDepth(11).setScrollFactor(0).setShadow(2, 2, "#000000", 2, true, true);;
         b_nivel[3] = this.add.image(200,500+50,"b_nivel").setInteractive().setDepth(10).setScrollFactor(0).setScale(0.25).setData({nivel:4});
-        b_niveltexto[4] = this.add.text(390,465+50,"5",{ fontFamily: 'Pacifico', fontSize: 46, color: '#000000' }).setDepth(11).setScrollFactor(0);
+        b_niveltexto[4] = this.add.text(390,465+50,"5",{ fontFamily: 'Pacifico', fontSize: 46, color: '#ffffff' }).setDepth(11).setScrollFactor(0).setShadow(2, 2, "#000000", 2, true, true);;
         b_nivel[4] = this.add.image(400,500+50,"b_nivel").setInteractive().setDepth(10).setScrollFactor(0).setScale(0.25).setData({nivel:5});
-        b_niveltexto[5] = this.add.text(590,465+50,"6",{ fontFamily: 'Pacifico', fontSize: 46, color: '#000000' }).setDepth(11).setScrollFactor(0);
+        b_niveltexto[5] = this.add.text(590,465+50,"6",{ fontFamily: 'Pacifico', fontSize: 46, color: '#ffffff' }).setDepth(11).setScrollFactor(0).setShadow(2, 2, "#000000", 2, true, true);;
         b_nivel[5] = this.add.image(600,500+50,"b_nivel").setInteractive().setDepth(10).setScrollFactor(0).setScale(0.25).setData({nivel:6});
 
         for(var i=0;i<6;i++){
@@ -417,26 +418,28 @@ class gamescene extends Phaser.Scene {
 
         },this);
         b_pausa.on('pointerup',function(){
+            bgm_gameplay.volume = bgm_gameplay.volume*0.5;
             for(var i=0;i<comandera.length;i++){
                 comandera[i].timer.paused = true;
             }
             s_click.play();
             if(!F_selniv){
             overlayPausa.setDepth(99);
-            b_continuar.setDepth(99);
-            b_salir.setDepth(99);
+            b_continuar.setDepth(99).setInteractive();
+            b_salir.setDepth(99).setInteractive();
             b_pausa.setFrame(0);
             F_pausa = true;
             }
         },this);
         b_continuar.on('pointerup',function(){
+            bgm_gameplay.volume = bgm_gameplay.volume*2;
             for(var i=0;i<comandera.length;i++){
                 comandera[i].timer.paused = false;
             }
             s_click.play();
             overlayPausa.setDepth(-1);
-            b_continuar.setDepth(-1);
-            b_salir.setDepth(-1);
+            b_continuar.setDepth(-1).disableInteractive();
+            b_salir.setDepth(-1).disableInteractive();
             F_pausa = false;
         },this);
         b_salir.on('pointerup',function(){
@@ -708,7 +711,7 @@ class gamescene extends Phaser.Scene {
             for(var i=0;i<comandera.length;i++){
                 comandera[i].setDepth(-1).disableInteractive();
                 comandera[i].active=false;
-                comandera[i].timer = this.time.addEvent({delay:Phaser.Math.Between(15000,21000)*i, callback: function(){
+                comandera[i].timer = this.time.addEvent({delay:Phaser.Math.Between(10000,15000)*i, callback: function(){
                     s_pedido.play({volume:0.25});
                     this.setDepth(3).setInteractive();
                     this.active = true;
@@ -780,6 +783,7 @@ class gamescene extends Phaser.Scene {
         
         //nivel terminado
         if(ticketsleft==0){
+            
             puntajeAfinal = Phaser.Math.CeilTo(puntajeAfinal/ticketsjson.cantTickets)
             puntajeBfinal = Phaser.Math.CeilTo(puntajeBfinal/ticketsjson.cantTickets)
             puntajeCfinal = puntajeCfinal;
@@ -787,12 +791,14 @@ class gamescene extends Phaser.Scene {
             F_burgerDone=true;
             overlayPuntaje.setDepth(9);
             if(puntajeTotalfinal>70){
+                this.add.text(460,150,this.consejos("consejosWin"),{ font: '16px Raleway',color: '#4a4a4a',align:'justify'}).setDepth(10).setScrollFactor(0).setOrigin(0).setWordWrapWidth(210, false);
                 this.add.text(150, 150, '¡Genial!', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0);
                 s_win.play();
                 b_siguiente = this.add.image(510,570,'b_siguiente').setScrollFactor(0).setDepth(10).setInteractive();
                 F_nivelactualnum++; 
             }
-            else{
+            else{   
+                this.add.text(460,150,this.consejos("consejosLose"),{ font: '16px Raleway',color: '#4a4a4a',align:'justify'}).setDepth(10).setScrollFactor(0).setOrigin(0).setWordWrapWidth(210, false);
                 this.add.text(150, 150, 'Intenta de nuevo...', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0);
                 s_lose.play();
                 b_siguiente = this.add.image(510,570,'b_reintentar').setScrollFactor(0).setDepth(10).setInteractive();
@@ -1140,6 +1146,11 @@ class gamescene extends Phaser.Scene {
         F_nivelactual = "level"+F_nivelactualnum;
         F_generartickets = true;
             
+    }
+    consejos(condicion){
+        var consejosjson = mundo.cache.json.get(condicion);
+        var consejos = [consejosjson.con1,consejosjson.con2,consejosjson.con3,consejosjson.con4,consejosjson.con5];
+        return consejos[Phaser.Math.Between(0,4)]
     }
     
 }

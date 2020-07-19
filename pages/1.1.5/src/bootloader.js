@@ -89,6 +89,8 @@ class Bootloader extends Phaser.Scene {
         this.load.json('level4','./assets/json/level4.json');
         this.load.json('level5','./assets/json/level5.json');
         this.load.json('level6','./assets/json/level6.json');
+        this.load.json('consejosWin','./assets/json/consejosWin.json');
+        this.load.json('consejosLose','./assets/json/consejosLose.json');
 
         this.load.spritesheet('Sp_freezer','./assets/sp_freezer.png', {frameWidth: 222, frameHeight: 327});
         this.load.spritesheet('Sp_burger','./assets/sp_burger.png', {frameWidth: 48, frameHeight: 25});
