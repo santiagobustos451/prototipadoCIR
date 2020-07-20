@@ -322,7 +322,7 @@ class gamescene extends Phaser.Scene {
                 }
                 //pan de arriba señala que la hamburguesa se termino de armar
                 F_burgerDone = true;
-                overlayBurgerDone.setDepth(9);
+                overlayBurgerDone.setDepth(10+alturaPilaPlato+alturaPilaTabla);
                 b_basura.setDepth(8);
             }
         },this);
@@ -577,7 +577,7 @@ class gamescene extends Phaser.Scene {
             s_ambiente.play({loop:true,volume:0.25});
             var mundo = this;
             overlayTicket = this.add.image(400,400,'overlay_base').setDepth(-1).setScrollFactor(0);
-            textoTicket = this.add.text(275,200,"",{ fontFamily: 'Pacifico', fontSize: 46, color: '#000000' }).setDepth(10).setScrollFactor(0);
+            textoTicket = this.add.text(275,200,"",{ fontFamily: 'Pacifico', fontSize: 46, color: '#000000' }).setDepth(11+alturaPilaPlato+alturaPilaTabla).setScrollFactor(0);
             ticketsleft = ticketsjson.cantTickets
             tickets = [ticketsjson.ticket_1,ticketsjson.ticket_2,ticketsjson.ticket_3,ticketsjson.ticket_4,ticketsjson.ticket_5,ticketsjson.ticket_6]
             for(var i=0;i<tickets.length;i++){
@@ -596,27 +596,27 @@ class gamescene extends Phaser.Scene {
                             s_ticket.play();
                             this.setDepth(-1);
                             overlayTicket.setInteractive().setDepth(9);
-                            textoTicket.setText(this.id).setDepth(10);
+                            textoTicket.setText(this.id).setDepth(11+alturaPilaPlato+alturaPilaTabla);
                             var separacion = 300/this.content.length;
                             for(var b=0;b<this.content.length;b++){
                                 switch(this.content[b]){//5=hamburguesa 4=pan de arriba 3=pan de abajo 2= lechuga, 1=cebolla, 0=tomate
                                     case 0:
-                                        dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_tomate").setScrollFactor(0).setDepth(10);
+                                        dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_tomate").setScrollFactor(0).setDepth(11+alturaPilaPlato+alturaPilaTabla);
                                         break;
                                     case 1:
-                                        dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_cebolla").setScrollFactor(0).setDepth(10);
+                                        dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_cebolla").setScrollFactor(0).setDepth(11+alturaPilaPlato+alturaPilaTabla);
                                         break;
                                     case 2:
-                                        dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_lechuga").setScrollFactor(0).setDepth(10);
+                                        dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_lechuga").setScrollFactor(0).setDepth(11+alturaPilaPlato+alturaPilaTabla);
                                         break;
                                     case 3:
-                                        dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_panabajo").setScrollFactor(0).setDepth(10);
+                                        dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_panabajo").setScrollFactor(0).setDepth(11+alturaPilaPlato+alturaPilaTabla);
                                         break;
                                     case 4:
-                                        dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_panarriba").setScrollFactor(0).setDepth(10);
+                                        dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"obj_panarriba").setScrollFactor(0).setDepth(11+alturaPilaPlato+alturaPilaTabla);
                                         break;
                                     case 5:
-                                        dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"33").setScrollFactor(0).setDepth(10).setScale(1.3);
+                                        dibujoTicket[b]=mundo.add.image(400,500-b*separacion,"33").setScrollFactor(0).setDepth(11+alturaPilaPlato+alturaPilaTabla).setScale(1.3);
                                         break;
                                 
                                 }
@@ -718,7 +718,7 @@ class gamescene extends Phaser.Scene {
             for(var i=0;i<comandera.length;i++){
                 comandera[i].setDepth(-1).disableInteractive();
                 comandera[i].active=false;
-                comandera[i].timer = this.time.addEvent({delay:Phaser.Math.Between(100,200)*i, callback: function(){
+                comandera[i].timer = this.time.addEvent({delay:Phaser.Math.Between(10000,15000)*i, callback: function(){
                     s_pedido.play({volume:0.25});
                     this.setDepth(3).setInteractive();
                     this.active = true;
@@ -794,31 +794,39 @@ class gamescene extends Phaser.Scene {
             elapsedTime = levelTimer.getElapsedSeconds();
             console.log(elapsedTime);
 
-            puntajeAfinal = Phaser.Math.CeilTo(puntajeAfinal/ticketsjson.cantTickets)
-            puntajeBfinal = Phaser.Math.CeilTo(puntajeBfinal/ticketsjson.cantTickets)
-            puntajeCfinal = puntajeCfinal;
-            puntajeTotalfinal = Phaser.Math.CeilTo(puntajeTotalfinal/ticketsjson.cantTickets)
+            puntajeAfinal = Phaser.Math.CeilTo(puntajeAfinal/ticketsjson.cantTickets);
+            puntajeBfinal = Phaser.Math.CeilTo(puntajeBfinal/ticketsjson.cantTickets);
+            if(elapsedTime/ticketsjson.perfectTime<=1){
+                puntajeCfinal = 100;
+            }
+            else{
+                puntajeCfinal = Phaser.Math.CeilTo(this.funcionpuntaje(elapsedTime,ticketsjson.perfectTime));
+            }
+            if(puntajeCfinal<0){
+                puntajeCfinal = 0;
+            }
+            puntajeTotalfinal = Phaser.Math.CeilTo(((puntajeTotalfinal/ticketsjson.cantTickets)+puntajeCfinal)/2)
             F_burgerDone=true;
-            overlayPuntaje.setDepth(9);
+            overlayPuntaje.setDepth(10+alturaPilaPlato+alturaPilaTabla);
             if(puntajeTotalfinal>70){
-                this.add.text(460,150,this.consejos("consejosWin"),{ font: '16px Raleway',color: '#4a4a4a',align:'justify'}).setDepth(10).setScrollFactor(0).setOrigin(0).setWordWrapWidth(210, false);
-                this.add.text(150, 150, '¡Genial!', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0);
+                this.add.text(460,150,this.consejos("consejosWin"),{ font: '16px Raleway',color: '#4a4a4a',align:'justify'}).setDepth(10+alturaPilaPlato+alturaPilaTabla).setScrollFactor(0).setOrigin(0).setWordWrapWidth(210, false);
+                this.add.text(150, 150, '¡Genial!', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(11+alturaPilaPlato+alturaPilaTabla).setScrollFactor(0);
                 s_win.play();
-                b_siguiente = this.add.image(510,570,'b_siguiente').setScrollFactor(0).setDepth(10).setInteractive();
+                b_siguiente = this.add.image(510,570,'b_siguiente').setScrollFactor(0).setDepth(11+alturaPilaPlato+alturaPilaTabla).setInteractive();
                 F_nivelactualnum++; 
             }
             else{   
-                this.add.text(460,150,this.consejos("consejosLose"),{ font: '16px Raleway',color: '#4a4a4a',align:'justify'}).setDepth(10).setScrollFactor(0).setOrigin(0).setWordWrapWidth(210, false);
-                this.add.text(150, 150, 'Intenta de nuevo...', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0);
+                this.add.text(460,150,this.consejos("consejosLose"),{ font: '16px Raleway',color: '#4a4a4a',align:'justify'}).setDepth(11+alturaPilaPlato+alturaPilaTabla).setScrollFactor(0).setOrigin(0).setWordWrapWidth(210, false);
+                this.add.text(150, 150, 'Intenta de nuevo...', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(11+alturaPilaPlato+alturaPilaTabla).setScrollFactor(0);
                 s_lose.play();
-                b_siguiente = this.add.image(510,570,'b_reintentar').setScrollFactor(0).setDepth(10).setInteractive();
+                b_siguiente = this.add.image(510,570,'b_reintentar').setScrollFactor(0).setDepth(11+alturaPilaPlato+alturaPilaTabla).setInteractive();
             }
             
-            this.add.text(300,205,puntajeAfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
-            this.add.text(300,180,puntajeBfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
-            this.add.text(300,230,puntajeCfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
-            this.add.text(300,340,puntajeTotalfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(10).setScrollFactor(0).setOrigin(0);
-            b_volver = this.add.image(400,570+89,'b_volver').setScrollFactor(0).setDepth(10).setInteractive();
+            this.add.text(300,205,puntajeAfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(11+alturaPilaPlato+alturaPilaTabla).setScrollFactor(0).setOrigin(0);
+            this.add.text(300,180,puntajeBfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(11+alturaPilaPlato+alturaPilaTabla).setScrollFactor(0).setOrigin(0);
+            this.add.text(300,230,puntajeCfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(11+alturaPilaPlato+alturaPilaTabla).setScrollFactor(0).setOrigin(0);
+            this.add.text(300,340,puntajeTotalfinal+'%', { font: '24px Raleway',color: '#4a4a4a'}).setDepth(11+alturaPilaPlato+alturaPilaTabla).setScrollFactor(0).setOrigin(0);
+            b_volver = this.add.image(400,570+89,'b_volver').setScrollFactor(0).setDepth(11+alturaPilaPlato+alturaPilaTabla).setInteractive();
             b_volver.on('pointerup',this.volverMenu,this);
             
             if(F_nivelactualnum>6 && puntajeTotalfinal>70){
@@ -829,7 +837,7 @@ class gamescene extends Phaser.Scene {
             }
             
             
-            b_niveles = this.add.image(290,570,'b_niveles').setScrollFactor(0).setDepth(10).setInteractive();
+            b_niveles = this.add.image(290,570,'b_niveles').setScrollFactor(0).setDepth(11+alturaPilaPlato+alturaPilaTabla).setInteractive();
             b_niveles.on('pointerup',this.levelselect,this);
             ticketsleft=99;
         }
@@ -881,7 +889,7 @@ class gamescene extends Phaser.Scene {
                     else if (ctndr_burgers[(i-1)].x>=limitesCeldasX1[5] && ctndr_burgers[(i-1)].x<limitesCeldasX2[5] && ctndr_burgers[(i-1)].y>=limitesCeldasY1[5] && ctndr_burgers[(i-1)].y<limitesCeldasY2[5] ){
                         this.situarBurger(i,5)
                     }
-                    else if (ctndr_burgers[(i-1)].x>=560+550 && ctndr_burgers[(i-1)].x<700+550 && ctndr_burgers[(i-1)].y>=420 && ctndr_burgers[(i-1)].y<500){
+                    else if (ctndr_burgers[(i-1)].x>=560+550 && ctndr_burgers[(i-1)].x<700+550 && ctndr_burgers[(i-1)].y>=350 && ctndr_burgers[(i-1)].y<500){
                         this.platoBurger(i);
                     }
                     else{  
@@ -1161,6 +1169,9 @@ class gamescene extends Phaser.Scene {
         var consejosjson = mundo.cache.json.get(condicion);
         var consejos = [consejosjson.con1,consejosjson.con2,consejosjson.con3,consejosjson.con4,consejosjson.con5];
         return consejos[Phaser.Math.Between(0,4)]
+    }
+    funcionpuntaje(x,z){
+        return (-100*((x-z)/(2*z)))+100
     }
     
 }
