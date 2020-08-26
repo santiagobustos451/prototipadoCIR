@@ -847,7 +847,7 @@ class gamescene extends Phaser.Scene {
 
             if(ctndr_burgers[a].data.values.celda!=undefined && ctndr_burgers[a].data.values.agarrada == false && !F_burgerDone && !F_selniv && !F_pausa){
                 ctndr_burgers[a].data.values.cocinado++; 
-                if(ctndr_burgers[a].data.values.cocinado % 400 === 0 && ctndr_burgers[a].data.values.ladoB < 5){
+                if(ctndr_burgers[a].data.values.cocinado % 3000 === 0 && ctndr_burgers[a].data.values.ladoB < 5){
                     ctndr_burgers[a].data.values.ladoB++;
                     ctndr_burgers[a].anims.play(String(ctndr_burgers[a].data.values.ladoA).concat(ctndr_burgers[a].data.values.ladoB))
                 }
