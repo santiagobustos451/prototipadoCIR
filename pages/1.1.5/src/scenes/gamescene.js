@@ -1235,13 +1235,13 @@ class gamescene extends Phaser.Scene {
     //cocinado de hamburguesas
     for (var a = 0; a < ctndr_burgers.length; a++) {
       if (
-        ctndr_burgers[a].data.values.celda != undefined &&
+        ctndr_burgers[a].data.values.celda != undefined && //si esta en la plancha
         ctndr_burgers[a].data.values.agarrada == false &&
         !F_burgerDone &&
         !F_selniv &&
         !F_pausa
       ) {
-        ctndr_burgers[a].data.values.cocinado++;
+        ctndr_burgers[a].data.values.cocinado++; //cocinar la hamburguesa
         if (
           ctndr_burgers[a].data.values.cocinado % 400 === 0 &&
           ctndr_burgers[a].data.values.ladoB < 5
