@@ -1233,23 +1233,23 @@ class gamescene extends Phaser.Scene {
     }
 
     //cocinado de hamburguesas
-    for (var a = 0; a < ctndr_burgers.length; a++) {
+    for (let hamburguesa of ctndr_burgers) {
       if (
-        ctndr_burgers[a].data.values.celda != undefined && //si esta en la plancha
-        ctndr_burgers[a].data.values.agarrada == false &&
+        hamburguesa.data.values.celda != undefined && //si esta en la plancha
+        hamburguesa.data.values.agarrada == false &&
         !F_burgerDone &&
         !F_selniv &&
         !F_pausa
       ) {
-        ctndr_burgers[a].data.values.cocinado++; //cocinar la hamburguesa
+        hamburguesa.data.values.cocinado++; //cocinar la hamburguesa
         if (
-          ctndr_burgers[a].data.values.cocinado % 400 === 0 &&
-          ctndr_burgers[a].data.values.ladoB < 5
+          hamburguesa.data.values.cocinado % 400 === 0 &&
+          hamburguesa.data.values.ladoB < 5
         ) {
-          ctndr_burgers[a].data.values.ladoB++;
-          ctndr_burgers[a].anims.play(
-            String(ctndr_burgers[a].data.values.ladoA).concat(
-              ctndr_burgers[a].data.values.ladoB
+          hamburguesa.data.values.ladoB++;
+          hamburguesa.anims.play(
+            String(hamburguesa.data.values.ladoA).concat(
+              hamburguesa.data.values.ladoB
             )
           );
         }
@@ -1259,8 +1259,8 @@ class gamescene extends Phaser.Scene {
     //estación de cocina
 
     if (estacion == 1) {
-      for (var a = 0; a < ctndr_burgers.length; a++) {
-        this.input.setDraggable(ctndr_burgers[a], true);
+      for (let hamburguesa of ctndr_burgers) {
+        this.input.setDraggable(hamburguesa, true);
       }
       //reacciona a la bandera, crea una hamburguesa
       if (F_burgerCrear) {
