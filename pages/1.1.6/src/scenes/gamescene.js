@@ -888,6 +888,7 @@ class gamescene extends Phaser.Scene {
           comandera[i].content = tickets_shuffle[i].content;
           comandera[i].on("pointerup", function () {
             if (!F_burgerDone && !F_selniv && !F_pausa) {
+              //si la hamburguesa no está terminada, se arma el ticket en la pantalla
               s_ticket.play();
               this.setDepth(-1);
               overlayTicket.setInteractive().setDepth(9);
@@ -939,13 +940,14 @@ class gamescene extends Phaser.Scene {
                 }
               }
             } else if (F_burgerDone && !F_selniv && !F_pausa) {
-              //determinación de puntaje
+              //si la hamburguesa esta terminada, se inicia la determinación de puntaje
 
               s_pedido.play();
               this.removeInteractive();
               this.active = false;
               var cantTabla = tabla_burgers.length;
               var cantTicket = this.content.length;
+              console.log(this.content);
               for (var b = 0; b < 6; b++) {
                 //FIDELIDAD - compara las repeticiones de cada ingrediente en ticket y en hamburguesa armada
                 for (var c = 0; c < cantTabla; c++) {
@@ -970,6 +972,23 @@ class gamescene extends Phaser.Scene {
                 repeticionesA = 0;
                 repeticionesB = 0;
               }
+              //se le da un peso superior a la hamburguesa
+              var repeticionesBurgerA = 0;
+              var repeticionesBurgerB = 0;
+              for (var c = 0; c < cantTabla; c++) {
+                if (tabla_burgers[c].data.values.ing == 5) {
+                  repeticionesBurgerA += 1;
+                  console.log(repeticionesBurgerA);
+                }
+                if (this.content[c] == 5) {
+                  repeticionesBurgerB += 1;
+                  console.log(repeticionesBurgerB);
+                }
+              }
+              if (repeticionesBurgerA == repeticionesBurgerB) {
+                puntajeA += 5;
+              }
+
               for (var c = 0; c < cantTabla; c++) {
                 //chequea contaminación de ingredientes y cocción de las hamburguesas
                 if (tabla_burgers[c].data.values.contaminado == true) {
@@ -1008,32 +1027,32 @@ class gamescene extends Phaser.Scene {
               ticketsleft -= 1;
               if (puntajeA > 0) {
                 puntajeA = Phaser.Math.CeilTo(
-                  (puntajeA / (6 + this.content.length)) * 100
+                  (puntajeA / (11 + this.content.length)) * 100
                 );
               } else {
                 puntajeA = 0;
               }
               puntajeB = Phaser.Math.CeilTo(puntajeB * 100);
+              //si la hamburguesa esta contaminada, el puntaje de salubridad tiene mucho más peso
               if (puntajeB == 0) {
                 puntajeTotal = Phaser.Math.CeilTo(
-                  (8 * puntajeA + 8 * puntajeB + puntajeC) / 17
+                  (16 * puntajeA + 16 * puntajeB) / 32
                 );
               } else {
                 puntajeTotal = Phaser.Math.CeilTo(
-                  (8 * puntajeA + puntajeB + puntajeC) / 10
+                  (15 * puntajeA + puntajeB) / 16
                 );
               }
               puntajeAfinal += puntajeA;
               puntajeBfinal += puntajeB;
-              //puntajeCfinal+=puntajeC
               puntajeTotalfinal += puntajeTotal;
+
               console.log("Fidelidad:" + puntajeA);
               console.log("Salubridad:" + puntajeB);
               console.log("Total:" + puntajeTotal);
 
               puntajeA = 0; //fidelidad
               puntajeB = 0; //salubridad
-              puntajeC = 100; //tiempo
               puntajeTotal = 100;
             }
           });
@@ -1148,7 +1167,8 @@ class gamescene extends Phaser.Scene {
         puntajeCfinal = 0;
       }
       puntajeTotalfinal = Phaser.Math.CeilTo(
-        (puntajeTotalfinal / ticketsjson.cantTickets + puntajeCfinal) / 2
+        ((10 * puntajeTotalfinal) / ticketsjson.cantTickets + puntajeCfinal) /
+          11
       );
       F_burgerDone = true;
       overlayPuntaje.setDepth(10 + alturaPilaPlato + alturaPilaTabla);
