@@ -374,9 +374,10 @@ class gamescene extends Phaser.Scene {
       .setScrollFactor(0);
     b_basura = this.add
       .image(180, 105, "sp_b_basura")
-      .setDepth(8)
+      .setScale(0.8)
+      .setDepth(-1)
       .setScrollFactor(0)
-      .setInteractive();
+      .disableInteractive();
     b_basura.on("pointerover", function () {
       b_basura.setFrame(1);
     });
@@ -386,8 +387,8 @@ class gamescene extends Phaser.Scene {
     b_basura.on(
       "pointerup",
       function () {
-        if (!F_pausa && !F_selniv/* && tabla_burgers.length > 0*/) {
-          if(tabla_burgers.length>0){
+        if (!F_pausa && !F_selniv /* && tabla_burgers.length > 0*/) {
+          if (tabla_burgers.length > 0) {
             s_basura.play();
           }
           alturaPilaTabla = 0;
@@ -397,7 +398,35 @@ class gamescene extends Phaser.Scene {
             tabla_burgers.splice(0, 1);
           }
           F_burgerDone = false;
-            overlayBurgerDone.setDepth(-1);
+          overlayBurgerDone.setDepth(-1);
+          b_basura.disableInteractive();
+          b_basura.setDepth(-1);
+        }
+      },
+      this
+    );
+    var tacho = this.add
+      .image(1600, 480, "obj_trash")
+      .setDepth(2)
+      .setInteractive()
+      .setScale(0.6);
+    tacho.on(
+      "pointerup",
+      function () {
+        if (!F_pausa && !F_selniv /* && tabla_burgers.length > 0*/) {
+          if (tabla_burgers.length > 0) {
+            s_basura.play();
+          }
+          alturaPilaTabla = 0;
+          var elimina2 = tabla_burgers.length;
+          for (var a = 0; a < elimina2; a++) {
+            tabla_burgers[0].x = 5000;
+            tabla_burgers.splice(0, 1);
+          }
+          F_burgerDone = false;
+          overlayBurgerDone.setDepth(-1);
+          b_basura.disableInteractive();
+          b_basura.setDepth(-1);
         }
       },
       this
@@ -406,25 +435,24 @@ class gamescene extends Phaser.Scene {
     //hitbox de campana
 
     var b_campana = this.add
-      .sprite(1600,200,'sp_campana')
+      .sprite(1600, 200, "sp_campana")
       .setDepth(1)
       .setInteractive()
-      .on('pointerdown',function(){
+      .on("pointerdown", function () {
         s_pedido.play();
         this.setFrame(1);
       })
-      .on('pointerout',function(){
+      .on("pointerout", function () {
         this.setFrame(0);
       })
-      .on('pointerup',function(){
+      .on("pointerup", function () {
         F_burgerDone = true;
-        overlayBurgerDone.setDepth(
-          10 + alturaPilaPlato + alturaPilaTabla
-        );
+        overlayBurgerDone.setDepth(10 + alturaPilaPlato + alturaPilaTabla);
         b_basura.setDepth(8);
+        b_basura.setInteractive();
         alturaPilaTabla = 0;
         this.setFrame(0);
-      })
+      });
 
     //hitboxes de ingredientes, ponen ingrediente en tabla y se chequea contaminación
 
@@ -1596,11 +1624,13 @@ class gamescene extends Phaser.Scene {
     F_burgerAgarrada = true;
   }
   createIng(ingrediente, ingNum) {
-    this.newIng = this.add.sprite(
-      this.input.mousePointer.x + cam.scrollx,
-      this.input.mousePointer.y,
-      ingrediente
-    ).setScale(1.2);
+    this.newIng = this.add
+      .sprite(
+        this.input.mousePointer.x + cam.scrollx,
+        this.input.mousePointer.y,
+        ingrediente
+      )
+      .setScale(1.2);
     //this.newIng.setInteractive();
     this.newIng.setData({
       entabla: false,
