@@ -104,6 +104,7 @@ class mainmenu extends Phaser.Scene {
             music.volume = 0.5;
         }
         if(!F_reseteado){
+            b_mute.setFrame(0);
             music.play(musicConfig);
             F_reseteado = true;
         }

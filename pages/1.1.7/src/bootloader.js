@@ -143,6 +143,15 @@ class Bootloader extends Phaser.Scene {
         this.load.image('overlay_pausa','./assets/overlay_pausa.png');
         this.load.image('overlay_levelselect','./assets/overlay_levelselect.png');
 
+        this.load.spritesheet('tutLavado','./assets/tutLavado.png',{frameWidth: 480, frameHeight: 260});
+        this.load.spritesheet('tutArmado','./assets/tutArmado.png',{frameWidth: 480, frameHeight: 260});
+        this.load.spritesheet('tutCocinado','./assets/tutCocinado.png',{frameWidth: 480, frameHeight: 260});
+        this.load.spritesheet('tutTexto','./assets/tutTexto.png',{frameWidth: 600, frameHeight: 100});
+        this.load.image('bg_tutorial','./assets/bg_tutorial.png');
+        this.load.image('b_flechader','./assets/b_derecha.png');
+        this.load.image('b_flechaizq','./assets/b_izquierda.png');
+
+
         this.load.spritesheet('sp_b_mute','./assets/sp_b_mute.png',{frameWidth: 300, frameHeight: 300});
         this.load.spritesheet('sp_b_armado','./assets/sp_b_armado.png',{frameWidth: 244, frameHeight: 95});
         this.load.spritesheet('sp_b_fregadero','./assets/sp_b_fregadero.png',{frameWidth: 244, frameHeight: 95});
@@ -151,6 +160,7 @@ class Bootloader extends Phaser.Scene {
         this.load.spritesheet('sp_b_basura','./assets/sp_b_basura.png',{frameWidth: 100, frameHeight: 100});
         this.load.spritesheet('sp_manos','./assets/sp_manos.png',{frameWidth: 154, frameHeight: 154});
         this.load.spritesheet('sp_barra','./assets/sp_barrafregadero.png',{frameWidth: 450, frameHeight: 250});
+        this.load.spritesheet('sp_campana','./assets/sp_campana.png',{frameWidth: 78, frameHeight: 57});
     }
     
 }

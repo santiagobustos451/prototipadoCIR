@@ -386,47 +386,73 @@ class gamescene extends Phaser.Scene {
     b_basura.on(
       "pointerup",
       function () {
-        if (!F_pausa && !F_selniv && tabla_burgers.length > 0) {
-          s_basura.play();
+        if (!F_pausa && !F_selniv/* && tabla_burgers.length > 0*/) {
+          if(tabla_burgers.length>0){
+            s_basura.play();
+          }
           alturaPilaTabla = 0;
           var elimina2 = tabla_burgers.length;
           for (var a = 0; a < elimina2; a++) {
             tabla_burgers[0].x = 5000;
             tabla_burgers.splice(0, 1);
-            F_burgerDone = false;
-            overlayBurgerDone.setDepth(-1);
-            //b_basura.setDepth(-1);
           }
+          F_burgerDone = false;
+            overlayBurgerDone.setDepth(-1);
         }
       },
       this
     );
 
+    //hitbox de campana
+
+    var b_campana = this.add
+      .sprite(1600,200,'sp_campana')
+      .setDepth(1)
+      .setInteractive()
+      .on('pointerdown',function(){
+        s_pedido.play();
+        this.setFrame(1);
+      })
+      .on('pointerout',function(){
+        this.setFrame(0);
+      })
+      .on('pointerup',function(){
+        F_burgerDone = true;
+        overlayBurgerDone.setDepth(
+          10 + alturaPilaPlato + alturaPilaTabla
+        );
+        b_basura.setDepth(8);
+        alturaPilaTabla = 0;
+        this.setFrame(0);
+      })
+
     //hitboxes de ingredientes, ponen ingrediente en tabla y se chequea contaminación
 
     hb_lechuga = this.add
-      .image(1100 + 500, 350, "hb_bowls")
+      .image(1100 + 360, 333, "hb_bowls")
       .setDepth(1)
       .setInteractive()
       .setAlpha(0.01);
     hb_cebolla = this.add
-      .image(1100 + 390, 350, "hb_bowls")
+      .image(1100 + 270, 376, "hb_bowls")
       .setDepth(1)
       .setInteractive()
       .setAlpha(0.01);
     hb_tomate = this.add
-      .image(1100 + 280, 350, "hb_bowls")
+      .image(1100 + 270, 285, "hb_bowls")
       .setDepth(1)
       .setInteractive()
       .setAlpha(0.01);
     hb_panarriba = this.add
-      .image(1100 + 500, 430, "obj_panarriba")
+      .image(1100 + 477, 311, "hb_bowls")
       .setDepth(1)
-      .setInteractive();
+      .setInteractive()
+      .setAlpha(0.01);
     hb_panabajo = this.add
-      .image(1100 + 500, 460, "obj_panabajo")
+      .image(1100 + 568, 335, "hb_bowls")
       .setDepth(2)
-      .setInteractive();
+      .setInteractive()
+      .setAlpha(0.01);
 
     /*hb_lechuga.on(
       "pointerup",
@@ -942,7 +968,7 @@ class gamescene extends Phaser.Scene {
             } else if (F_burgerDone && !F_selniv && !F_pausa) {
               //si la hamburguesa esta terminada, se inicia la determinación de puntaje
 
-              s_pedido.play();
+              //s_pedido.play();
               this.removeInteractive();
               this.active = false;
               var cantTabla = tabla_burgers.length;
@@ -1449,10 +1475,10 @@ class gamescene extends Phaser.Scene {
       for (var b = 0; b < plato_burgers.length; b++) {
         if (!F_burgerAgarrada && plato_burgers[b].data.values.lastplato) {
           if (
-            plato_burgers[b].x >= 1250 &&
-            plato_burgers[b].x < 1520 &&
-            plato_burgers[b].y >= 400 - 7 * alturaPilaTabla &&
-            plato_burgers[b].y < 500
+            plato_burgers[b].x >= 1300 &&
+            plato_burgers[b].x < 1500 &&
+            plato_burgers[b].y >= 430 - 7 * alturaPilaTabla &&
+            plato_burgers[b].y < 515
           ) {
             this.situarBurgerTabla(b);
           } else {
@@ -1479,21 +1505,21 @@ class gamescene extends Phaser.Scene {
       for (var b = 0; b < ctndr_ing.length; b++) {
         if (!F_burgerAgarrada) {
           if (
-            ctndr_ing[b].x >= 1250 &&
-            ctndr_ing[b].x < 1520 &&
-            ctndr_ing[b].y >= 400 - alturaPilaTabla &&
-            ctndr_ing[b].y < 500
+            ctndr_ing[b].x >= 1300 &&
+            ctndr_ing[b].x < 1500 &&
+            ctndr_ing[b].y >= 430 - alturaPilaTabla &&
+            ctndr_ing[b].y < 515
           ) {
             s_hit.play();
-            alturaPilaTabla += 7;
+            alturaPilaTabla += 10;
             tabla_burgers.push(ctndr_ing[b]);
             ctndr_ing[b].setDepth(tabla_burgers.length);
-            ctndr_ing[b].x = 627 + 550 + 200;
-            ctndr_ing[b].y = 455 - alturaPilaTabla;
+            ctndr_ing[b].x = 1380;
+            ctndr_ing[b].y = 480 - alturaPilaTabla;
             if (!F_manoslimpias) {
               ctndr_ing[b].data.values.contaminado = true;
             }
-            if (ctndr_ing[b].data.values.ing == 4) {
+            if (ctndr_ing[b].data.values.ing == 9000) {
               F_burgerDone = true;
               overlayBurgerDone.setDepth(
                 10 + alturaPilaPlato + alturaPilaTabla
@@ -1539,7 +1565,7 @@ class gamescene extends Phaser.Scene {
       this.input.mousePointer.y,
       "11"
     );
-    this.newBurger.setScale(1.4);
+    this.newBurger.setScale(1.6);
     cant_burgers++;
     ctndr_burgers.push(this.newBurger);
     this.newBurger.setInteractive();
@@ -1574,7 +1600,7 @@ class gamescene extends Phaser.Scene {
       this.input.mousePointer.x + cam.scrollx,
       this.input.mousePointer.y,
       ingrediente
-    );
+    ).setScale(1.2);
     //this.newIng.setInteractive();
     this.newIng.setData({
       entabla: false,
@@ -1728,10 +1754,10 @@ class gamescene extends Phaser.Scene {
       !F_burgerDone &&
       !F_burgerAgarrada
     ) {
-      alturaPilaTabla += 7;
+      alturaPilaTabla += 10;
       mundo.input.setDraggable(plato_burgers[b], false);
-      plato_burgers[b].x = 627 + 750;
-      plato_burgers[b].y = 455 - alturaPilaTabla;
+      plato_burgers[b].x = 1380;
+      plato_burgers[b].y = 480 - alturaPilaTabla;
       tabla_burgers.push(plato_burgers[b]);
       plato_burgers[b].depth = tabla_burgers.length;
       plato_burgers[b].data.values.enplato = false;
