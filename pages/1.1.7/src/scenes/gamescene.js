@@ -389,14 +389,9 @@ class gamescene extends Phaser.Scene {
       function () {
         if (!F_pausa && !F_selniv /* && tabla_burgers.length > 0*/) {
           if (tabla_burgers.length > 0) {
-            s_basura.play();
+            s_click.play();
           }
-          alturaPilaTabla = 0;
-          var elimina2 = tabla_burgers.length;
-          for (var a = 0; a < elimina2; a++) {
-            tabla_burgers[0].x = 5000;
-            tabla_burgers.splice(0, 1);
-          }
+
           F_burgerDone = false;
           overlayBurgerDone.setDepth(-1);
           b_basura.disableInteractive();
