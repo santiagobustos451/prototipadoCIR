@@ -197,6 +197,10 @@ class Bootloader extends Phaser.Scene {
       frameWidth: 100,
       frameHeight: 100,
     });
+    this.load.spritesheet("sp_b_nivel", "./assets/sp_b_nivel.png", {
+      frameWidth: 607,
+      frameHeight: 541,
+    });
     this.load.spritesheet("sp_manos", "./assets/sp_manos.png", {
       frameWidth: 154,
       frameHeight: 154,
@@ -208,6 +212,10 @@ class Bootloader extends Phaser.Scene {
     this.load.spritesheet("sp_campana", "./assets/sp_campana.png", {
       frameWidth: 78,
       frameHeight: 57,
+    });
+    this.load.spritesheet("sp_fregadero_hl", "./assets/sp_b_fregadero_hl.png", {
+      frameWidth: 245,
+      frameHeight: 97,
     });
   }
 }
