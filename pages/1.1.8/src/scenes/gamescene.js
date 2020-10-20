@@ -77,6 +77,7 @@ var b_volver;
 var b_siguiente;
 var b_niveles;
 var b_mute;
+var b_campana;
 var ctndr_burgers = [];
 var ctndr_ing = [];
 var plato_burgers = [];
@@ -95,6 +96,7 @@ var F_generartickets = false;
 var F_freir;
 var F_basura = false;
 var F_animFreg;
+var F_panarriba;
 var progresoLav = 0;
 var cant_burgers = 0;
 var celdasX = [205, 320, 440, 205, 320, 440]; //centros de cada celda
@@ -412,6 +414,8 @@ class gamescene extends Phaser.Scene {
               if (tabla_burgers.length > 0) {
                 s_basura.play();
               }
+              F_panarriba = false;
+              b_campana.setFrame(0);
               alturaPilaTabla = 0;
               var elimina2 = tabla_burgers.length;
               for (var a = 0; a < elimina2; a++) {
@@ -452,24 +456,37 @@ class gamescene extends Phaser.Scene {
 
     //hitbox de campana
 
-    var b_campana = this.add
-      .sprite(1600, 200, "sp_campana")
+    b_campana = this.add
+      .sprite(1600, 160, "sp_campana")
       .setDepth(1)
       .setInteractive()
       .on("pointerdown", function () {
         s_pedido.play();
-        this.setFrame(1);
+        if (F_panarriba) {
+          this.setFrame(3);
+        } else {
+          this.setFrame(1);
+        }
       })
       .on("pointerout", function () {
-        this.setFrame(0);
+        if (F_panarriba) {
+          this.setFrame(2);
+        } else {
+          this.setFrame(0);
+        }
       })
       .on("pointerup", function () {
         F_burgerDone = true;
-        overlayBurgerDone.setDepth(10 + alturaPilaPlato + alturaPilaTabla);
+        overlayBurgerDone.setDepth(9 + alturaPilaPlato + alturaPilaTabla);
         b_basura.setDepth(8);
         b_basura.setInteractive();
         //alturaPilaTabla = 0;
-        this.setFrame(0);
+        if (F_panarriba) {
+          this.setFrame(0);
+        } else {
+          this.setFrame(0);
+        }
+        F_panarriba = false;
       });
 
     //hitboxes de ingredientes, ponen ingrediente en tabla y se chequea contaminación
@@ -884,7 +901,6 @@ class gamescene extends Phaser.Scene {
 
   update(time, delta) {
     mundo = this;
-    console.log(estacion);
     if (!F_manoslimpias) {
       if (estacion != 0) {
         if (F_animFreg) {
@@ -923,6 +939,8 @@ class gamescene extends Phaser.Scene {
         delay: Infinity, // ms
         callback: null,
       });
+
+      b_volver.removeInteractive().setDepth(-1);
 
       for (var b = 0; b < 6; b++) {
         b_nivel[b].removeInteractive().setDepth(-1);
@@ -979,7 +997,7 @@ class gamescene extends Phaser.Scene {
               this.setDepth(-1);
               overlayTicket
                 .setInteractive()
-                .setDepth(9 + alturaPilaPlato + alturaPilaTabla);
+                .setDepth(11 + alturaPilaPlato + alturaPilaTabla);
               textoTicket
                 .setText(this.id)
                 .setDepth(11 + alturaPilaPlato + alturaPilaTabla);
@@ -1032,7 +1050,7 @@ class gamescene extends Phaser.Scene {
               this.setDepth(-1);
               overlayTicket
                 .setInteractive()
-                .setDepth(9 + alturaPilaPlato + alturaPilaTabla);
+                .setDepth(11 + alturaPilaPlato + alturaPilaTabla);
               textoTicket
                 .setText(this.id)
                 .setDepth(11 + alturaPilaPlato + alturaPilaTabla);
@@ -1090,6 +1108,8 @@ class gamescene extends Phaser.Scene {
                   "pointerup",
                   function () {
                     //Aqui se elimina el overlay
+                    b_campana.setFrame(0);
+                    F_panarriba = false;
                     for (var i = 0; i < comandera.length; i++) {
                       if (comandera[i].active) {
                         comandera[i].setDepth(8);
@@ -1463,7 +1483,8 @@ class gamescene extends Phaser.Scene {
       if (puntajeTotalfinal > 70) {
         this.add
           .text(460, 150, this.consejos("consejosWin"), {
-            font: "16px Raleway",
+            fontFamily: "Raleway",
+            fontSize: 16,
             color: "#4a4a4a",
             align: "justify",
           })
@@ -1473,7 +1494,8 @@ class gamescene extends Phaser.Scene {
           .setWordWrapWidth(210, false);
         this.add
           .text(150, 150, "¡Genial!", {
-            font: "24px Raleway",
+            fontFamily: "Raleway",
+            fontSize: 24,
             color: "#4a4a4a",
           })
           .setDepth(11 + alturaPilaPlato + alturaPilaTabla)
@@ -1488,7 +1510,8 @@ class gamescene extends Phaser.Scene {
       } else {
         this.add
           .text(460, 150, this.consejos("consejosLose"), {
-            font: "16px Raleway",
+            fontFamily: "Raleway",
+            fontSize: 16,
             color: "#4a4a4a",
             align: "justify",
           })
@@ -1498,7 +1521,8 @@ class gamescene extends Phaser.Scene {
           .setWordWrapWidth(210, false);
         this.add
           .text(150, 150, "Intenta de nuevo...", {
-            font: "24px Raleway",
+            fontFamily: "Raleway",
+            fontSize: 24,
             color: "#4a4a4a",
           })
           .setDepth(11 + alturaPilaPlato + alturaPilaTabla)
@@ -1513,7 +1537,8 @@ class gamescene extends Phaser.Scene {
 
       this.add
         .text(300, 205, puntajeAfinal + "%", {
-          font: "24px Raleway",
+          fontFamily: "Raleway",
+          fontSize: 24,
           color: "#4a4a4a",
         })
         .setDepth(11 + alturaPilaPlato + alturaPilaTabla)
@@ -1521,7 +1546,8 @@ class gamescene extends Phaser.Scene {
         .setOrigin(0);
       this.add
         .text(300, 180, puntajeBfinal + "%", {
-          font: "24px Raleway",
+          fontFamily: "Raleway",
+          fontSize: 24,
           color: "#4a4a4a",
         })
         .setDepth(11 + alturaPilaPlato + alturaPilaTabla)
@@ -1529,7 +1555,8 @@ class gamescene extends Phaser.Scene {
         .setOrigin(0);
       this.add
         .text(300, 230, puntajeCfinal + "%", {
-          font: "24px Raleway",
+          fontFamily: "Raleway",
+          fontSize: 24,
           color: "#4a4a4a",
         })
         .setDepth(11 + alturaPilaPlato + alturaPilaTabla)
@@ -1537,7 +1564,8 @@ class gamescene extends Phaser.Scene {
         .setOrigin(0);
       this.add
         .text(300, 340, puntajeTotalfinal + "%", {
-          font: "24px Raleway",
+          fontFamily: "Raleway",
+          fontSize: 24,
           color: "#4a4a4a",
         })
         .setDepth(11 + alturaPilaPlato + alturaPilaTabla)
@@ -1784,13 +1812,13 @@ class gamescene extends Phaser.Scene {
             if (!F_manoslimpias) {
               ctndr_ing[b].data.values.contaminado = true;
             }
-            if (ctndr_ing[b].data.values.ing == 9000) {
-              F_burgerDone = true;
-              overlayBurgerDone.setDepth(
-                10 + alturaPilaPlato + alturaPilaTabla
-              );
+            if (ctndr_ing[b].data.values.ing == 4) {
+              F_panarriba = true;
+              b_campana.setFrame(2);
+              /*F_burgerDone = true;
+              overlayBurgerDone.setDepth(9 + alturaPilaPlato + alturaPilaTabla);
               b_basura.setDepth(8);
-              alturaPilaTabla = 0;
+              alturaPilaTabla = 0;*/
             }
             ctndr_ing.splice(b, 1);
           } else {

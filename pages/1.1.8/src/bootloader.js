@@ -210,8 +210,8 @@ class Bootloader extends Phaser.Scene {
       frameHeight: 250,
     });
     this.load.spritesheet("sp_campana", "./assets/sp_campana.png", {
-      frameWidth: 78,
-      frameHeight: 57,
+      frameWidth: 100,
+      frameHeight: 150,
     });
     this.load.spritesheet("sp_fregadero_hl", "./assets/sp_b_fregadero_hl.png", {
       frameWidth: 245,
