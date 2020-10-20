@@ -65,6 +65,8 @@ var b_basura; //BOTONES E INDICADORES GUI
 var b_pausa;
 var b_nivel = [];
 var b_niveltexto = [];
+var b_confirmar;
+var b_cancelar;
 
 var indManos;
 var b_continuar; //BOTONES PAUSA Y PUNTAJE
@@ -89,6 +91,7 @@ var F_nivelactual;
 var F_nivelactualnum;
 var F_generartickets = false;
 var F_freir;
+var F_basura = false;
 var progresoLav = 0;
 var cant_burgers = 0;
 var celdasX = [205, 320, 440, 205, 320, 440]; //centros de cada celda
@@ -400,16 +403,48 @@ class gamescene extends Phaser.Scene {
       },
       this
     );
+    var overlayBasura = this.add.image(center_width,center_height,'overlay_basura').setDepth(-1).setScrollFactor(0);
     var tacho = this.add
       .image(1600, 480, "obj_trash")
       .setDepth(2)
       .setInteractive()
       .setScale(0.6);
+    tacho.on("pointerdown",function(){//bandera para que no pase nada si arrastramos algo a la basura
+      F_basura = true;
+    },this);
     tacho.on(
       "pointerup",
       function () {
-        if (!F_pausa && !F_selniv) {
-          if (tabla_burgers.length > 0) {
+        if (!F_pausa && !F_selniv && !F_burgerDone && F_basura) {
+          overlayBasura.setDepth(99);
+          F_pausa = true;
+          b_cancelar = this.add.image(center_width+60,center_height,"b_cancelar").setInteractive().setScrollFactor(0).setScale(.2).setDepth(100).on("pointerup",()=>{
+            F_pausa = false;
+            overlayBasura.setDepth(-1);
+            b_cancelar.setDepth(-1).removeInteractive();
+            b_confirmar.setDepth(-1).removeInteractive();
+          },this);
+          b_confirmar = this.add.image(center_width-60,center_height,"b_confirmar").setInteractive().setScrollFactor(0).setScale(.2).setDepth(100).on("pointerup",()=>{
+            if (tabla_burgers.length > 0) {
+              s_basura.play();
+            }
+            alturaPilaTabla = 0;
+            var elimina2 = tabla_burgers.length;
+            for (var a = 0; a < elimina2; a++) {
+              tabla_burgers[0].x = 5000;
+              tabla_burgers.splice(0, 1);
+            }
+            F_burgerDone = false;
+            overlayBurgerDone.setDepth(-1);
+            b_basura.disableInteractive();
+            b_basura.setDepth(-1);
+            F_basura = false;
+            F_pausa = false;
+            overlayBasura.setDepth(-1);
+            b_cancelar.setDepth(-1).removeInteractive();
+            b_confirmar.setDepth(-1).removeInteractive();
+          });
+          /*if (tabla_burgers.length > 0) {
             s_basura.play();
           }
           alturaPilaTabla = 0;
@@ -422,10 +457,14 @@ class gamescene extends Phaser.Scene {
           overlayBurgerDone.setDepth(-1);
           b_basura.disableInteractive();
           b_basura.setDepth(-1);
+          F_basura = false;*/
         }
       },
       this
     );
+    tacho.on("pointerout",function(){
+      F_basura = false;
+    })
 
     //hitbox de campana
 
