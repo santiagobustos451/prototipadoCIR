@@ -396,7 +396,7 @@ class gamescene extends Phaser.Scene {
             .setDepth(100)
             .on(
               "pointerup",
-              () => {
+              function () {
                 F_pausa = false;
                 overlayBasura.setDepth(-1);
                 b_cancelar.setDepth(-1).removeInteractive();
@@ -410,7 +410,7 @@ class gamescene extends Phaser.Scene {
             .setScrollFactor(0)
             .setScale(0.2)
             .setDepth(100)
-            .on("pointerup", () => {
+            .on("pointerup", function () {
               if (tabla_burgers.length > 0) {
                 s_basura.play();
               }
@@ -869,6 +869,7 @@ class gamescene extends Phaser.Scene {
     }
 
     this.input.on("pointerup", function () {
+      F_burgerAgarrada = false;
       console.log([
         mundo.input.mousePointer.worldX,
         mundo.input.mousePointer.worldY,
@@ -901,6 +902,7 @@ class gamescene extends Phaser.Scene {
 
   update(time, delta) {
     mundo = this;
+    console.log(F_burgerAgarrada);
     if (!F_manoslimpias) {
       if (estacion != 0) {
         if (F_animFreg) {
@@ -1115,7 +1117,7 @@ class gamescene extends Phaser.Scene {
                         comandera[i].setDepth(8);
                       }
                     }
-                    overlayTicket.setDepth(-1);
+                    overlayTicket.setDepth(-1).removeInteractive();
                     textoTicket.setDepth(-1);
                     for (var i = 0; i < dibujoTicket.length; i++) {
                       dibujoTicket[i].destroy();
@@ -1578,11 +1580,31 @@ class gamescene extends Phaser.Scene {
         .setInteractive();
       b_volver.on("pointerup", this.volverMenu, this);
 
-      if (F_nivelactualnum < 6 && puntajeTotalfinal > 70) {
-        F_nivelactualnum++;
-        b_siguiente.on("pointerup", this.changelevel, this);
-      } else if (F_nivelactualnum > 6 && puntajeTotalfinal > 70) {
-        b_siguiente.on("pointerup", this.volverMenu, this);
+      if (puntajeTotalfinal > 70) {
+        if (F_nivelactualnum < 6) {
+          F_nivelactualnum++;
+          b_siguiente.on("pointerup", this.changelevel, this);
+        } else {
+          b_siguiente.on(
+            "pointerup",
+            function () {
+              this.add
+                .image(center_width, center_height, "overlay_congrats")
+                .setScrollFactor(0)
+                .setDepth(999 + alturaPilaTabla + alturaPilaPlato);
+              b_volver.setDepth(1000 + alturaPilaTabla + alturaPilaPlato);
+              b_volver.y = 720;
+              b_niveles.removeInteractive();
+              b_siguiente.removeInteractive();
+              b_campana.removeInteractive();
+              b_pausa.removeInteractive();
+              var sonido = this.sound.add("s_winAll");
+              bgm_gameplay.stop();
+              sonido.play({ volume: 0.5 });
+            },
+            this
+          );
+        }
       } else {
         b_siguiente.on("pointerup", this.changelevel, this);
       }

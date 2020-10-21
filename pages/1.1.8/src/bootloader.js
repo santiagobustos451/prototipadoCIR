@@ -72,6 +72,7 @@ class Bootloader extends Phaser.Scene {
     this.load.audio("s_hit", "./assets/audio/sfx_hit.mp3");
     this.load.audio("s_plancha", "./assets/audio/sfx_plancha.mp3");
     this.load.audio("s_win", "./assets/audio/sfx_win.mp3");
+    this.load.audio("s_winAll", "./assets/audio/sfx_winAll.mp3");
     this.load.audio("s_lose", "./assets/audio/sfx_lose.mp3");
     this.load.audio("s_pedido", "./assets/audio/sfx_pedido.mp3");
     this.load.audio("s_ticket", "./assets/audio/sfx_ticket.mp3");
@@ -152,6 +153,7 @@ class Bootloader extends Phaser.Scene {
     this.load.image("overlay_pausa", "./assets/overlay_pausa.png");
     this.load.image("overlay_levelselect", "./assets/overlay_levelselect.png");
     this.load.image("overlay_basura", "./assets/overlay_basura.png");
+    this.load.image("overlay_congrats", "./assets/overlay_congrats.png");
 
     this.load.spritesheet("tutLavado", "./assets/tutLavado.png", {
       frameWidth: 480,
