@@ -1,6 +1,6 @@
 {
   "cantTickets": 5,
-  "perfectTime": 110,
+  "perfectTime": 90,
   "ticket_1": {
     "id": "1.",
     "exists": true,
