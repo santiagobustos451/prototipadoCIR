@@ -60,18 +60,20 @@ class mainmenu extends Phaser.Scene {
       this
     );
 
-    b_fullscreen = this.add.sprite(690,762,"sp_b_fullscreen").setScale(.8).setDepth(5).setInteractive().on("pointerup",function(){
-      if (mundo.scale.isFullscreen)
-            {
-                this.setFrame(0);
-                mundo.scale.stopFullscreen();
-            }
-            else
-            {
-                this.setFrame(1);
-                mundo.scale.startFullscreen();
-            }
-    })
+    b_fullscreen = this.add
+      .sprite(690, 762, "sp_b_fullscreen")
+      .setScale(0.8)
+      .setDepth(5)
+      .setInteractive()
+      .on("pointerup", function () {
+        if (mundo.scale.isFullscreen) {
+          this.setFrame(0);
+          mundo.scale.stopFullscreen();
+        } else {
+          this.setFrame(1);
+          mundo.scale.startFullscreen();
+        }
+      });
 
     music = this.sound.add("bgm_mainmenu");
     music.play(musicConfig);
@@ -143,6 +145,12 @@ class mainmenu extends Phaser.Scene {
     }
   }
   update() {
+    if (mundo.scale.isFullscreen) {
+      b_fullscreen.setFrame(1);
+    } else {
+      b_fullscreen.setFrame(0);
+    }
+
     if (!F_volumenbajo) {
       music.volume = 1;
     } else {

@@ -152,6 +152,8 @@ var puntajeTotalfinal = 0;
 var nivel;
 var elapsedTime;
 var levelTimer;
+var flecha;
+var flecha2;
 
 var repeticionesA = 0;
 var repeticionesB = 0;
@@ -171,6 +173,23 @@ class gamescene extends Phaser.Scene {
     mundo = this;
     center_width = this.sys.game.config.width / 2;
     center_height = this.sys.game.config.height / 2;
+
+    //flecha de campana
+    flecha2 = this.add
+      .image(1595, 115, "flecha_arriba")
+      .setDepth(-1)
+      .setRotation(3.141593)
+      .setScale(1.3);
+    mundo.tweens.add({
+      targets: flecha2,
+      scaleX: 1.4,
+      scaleY: 1.4,
+      ease: "Sine.easeInOut",
+      duration: 300,
+      delay: 50,
+      repeat: -1,
+      yoyo: true,
+    });
 
     //configuración de la cámara
     this.cameras.main.setBounds(0, 0, 1760, 1600);
@@ -193,31 +212,46 @@ class gamescene extends Phaser.Scene {
 
     //timer
 
-    timeText = this.add.text(400,700," ",{
+    timeText = this.add
+      .text(400, 700, " ", {
         fontFamily: "Pacifico",
         fontSize: 46,
         color: "#ffffff",
-        align: "center"
-    }).setDepth(9).setScrollFactor(0).setShadow(2, 2, "#000000", 2, true, true).setOrigin(.5,0);
-    this.add.graphics().fillRect(
-      300,
-      700,
-      200,80
-    ).setDepth(timeText.depth-1).setScrollFactor(0)
+        align: "center",
+      })
+      .setDepth(9)
+      .setScrollFactor(0)
+      .setShadow(2, 2, "#000000", 2, true, true)
+      .setOrigin(0.5, 0);
+    this.add
+      .graphics()
+      .fillStyle(0x000000, 0.5)
+      .fillRect(300, 700, 200, 80)
+      .setDepth(timeText.depth - 1)
+      .setScrollFactor(0);
+
     //boton fullscreen
 
-    b_fullscreen = this.add.sprite(690,762,"sp_b_fullscreen").setScrollFactor(0).setScale(.8).setDepth(alturaPilaPlato+alturaPilaTabla+99).setInteractive().on("pointerup",function(){
-      if (mundo.scale.isFullscreen)
-            {
-                this.setFrame(0);
-                mundo.scale.stopFullscreen();
-            }
-            else
-            {
-                this.setFrame(1);
-                mundo.scale.startFullscreen();
-            }
-    })
+    b_fullscreen = this.add
+      .sprite(690, 762, "sp_b_fullscreen")
+      .setScrollFactor(0)
+      .setScale(0.8)
+      .setDepth(alturaPilaPlato + alturaPilaTabla + 99)
+      .setInteractive()
+      .on("pointerup", function () {
+        if (mundo.scale.isFullscreen) {
+          this.setFrame(0);
+          mundo.scale.stopFullscreen();
+        } else {
+          this.setFrame(1);
+          mundo.scale.startFullscreen();
+        }
+      });
+    if (mundo.scale.isFullscreen) {
+      b_fullscreen.setFrame(0);
+    } else {
+      b_fullscreen.setFrame(1);
+    }
 
     //boton mute
 
@@ -306,6 +340,28 @@ class gamescene extends Phaser.Scene {
         F_nivelactual = "level" + this.data.values.nivel;
         F_generartickets = true;
         b_volver.removeInteractive().setDepth(-1);
+        if (F_nivelactualnum == 1) {
+          mundo.flecha = mundo.add
+            .image(270 + 550, 200, "flecha_arriba")
+            .setDepth(11)
+            .setInteractive()
+            .setData({ next: false, finished: false });
+
+          mundo.tweens.add({
+            targets: mundo.flecha,
+            scaleX: 1.1,
+            scaleY: 1.1,
+            ease: "Sine.easeInOut",
+            duration: 300,
+            delay: 50,
+            repeat: -1,
+            yoyo: true,
+          });
+          /*.on("pointerup", function () {
+              this.setDepth(-1);
+              this.removeInteractive();
+            });*/
+        }
       });
     }
 
@@ -446,6 +502,7 @@ class gamescene extends Phaser.Scene {
                 s_basura.play();
               }
               F_panarriba = false;
+              flecha2.setDepth(-1);
               b_campana.setFrame(0);
               alturaPilaTabla = 0;
               var elimina2 = tabla_burgers.length;
@@ -463,20 +520,6 @@ class gamescene extends Phaser.Scene {
               b_cancelar.setDepth(-1).removeInteractive();
               b_confirmar.setDepth(-1).removeInteractive();
             });
-          /*if (tabla_burgers.length > 0) {
-            s_basura.play();
-          }
-          alturaPilaTabla = 0;
-          var elimina2 = tabla_burgers.length;
-          for (var a = 0; a < elimina2; a++) {
-            tabla_burgers[0].x = 5000;
-            tabla_burgers.splice(0, 1);
-          }
-          F_burgerDone = false;
-          overlayBurgerDone.setDepth(-1);
-          b_basura.disableInteractive();
-          b_basura.setDepth(-1);
-          F_basura = false;*/
         }
       },
       this
@@ -493,18 +536,10 @@ class gamescene extends Phaser.Scene {
       .setInteractive()
       .on("pointerdown", function () {
         s_pedido.play();
-        if (F_panarriba) {
-          this.setFrame(3);
-        } else {
-          this.setFrame(1);
-        }
+        this.setFrame(1);
       })
       .on("pointerout", function () {
-        if (F_panarriba) {
-          this.setFrame(2);
-        } else {
-          this.setFrame(0);
-        }
+        this.setFrame(0);
       })
       .on("pointerup", function () {
         F_burgerDone = true;
@@ -512,10 +547,9 @@ class gamescene extends Phaser.Scene {
         b_basura.setDepth(8);
         b_basura.setInteractive();
         //alturaPilaTabla = 0;
+        this.setFrame(0);
         if (F_panarriba) {
-          this.setFrame(0);
-        } else {
-          this.setFrame(0);
+          flecha2.setDepth(-1);
         }
         F_panarriba = false;
       });
@@ -548,24 +582,6 @@ class gamescene extends Phaser.Scene {
       .setInteractive()
       .setAlpha(0.01);
 
-    /*hb_lechuga.on(
-      "pointerup",
-      function () {
-        if (!F_burgerDone && !F_selniv && !F_pausa) {
-          s_hit.play();
-          ingrediente = this.add
-            .sprite(627 + 550 + 200, 455 - alturaPilaTabla, "obj_lechuga")
-            .setDepth(tabla_burgers.length)
-            .setData({ ing: 2 }); //5=hamburguesa 4=pan de arriba 3=pan de abajo 2= lechuga, 1=cebolla, 0=tomate
-          alturaPilaTabla += 9;
-          tabla_burgers.push(ingrediente);
-          if (!F_manoslimpias) {
-            ingrediente.data.values.contaminado = true;
-          }
-        }
-      },
-      this
-    );*/
     hb_lechuga.on(
       "pointerdown",
       () => {
@@ -611,30 +627,6 @@ class gamescene extends Phaser.Scene {
       },
       mundo
     );
-
-    /*hb_panarriba.on(
-      "pointerup",
-      function () {
-        if (!F_burgerDone && !F_selniv && !F_pausa) {
-          s_hit.play();
-          alturaPilaTabla += 9;
-          ingrediente = this.add
-            .sprite(627 + 550 + 200, 455 - alturaPilaTabla, "obj_panarriba")
-            .setDepth(tabla_burgers.length)
-            .setData({ ing: 4 });
-          alturaPilaTabla = 0;
-          tabla_burgers.push(ingrediente);
-          if (!F_manoslimpias) {
-            ingrediente.data.values.contaminado = true;
-          }
-          //pan de arriba señala que la hamburguesa se termino de armar
-          F_burgerDone = true;
-          overlayBurgerDone.setDepth(10 + alturaPilaPlato + alturaPilaTabla);
-          b_basura.setDepth(8);
-        }
-      },
-      this
-    );*/
 
     //crea todas las animaciones de las hamburguesas, nombres almacenados en burgerstatenames
     for (var a = 0; a < 25; a++) {
@@ -682,6 +674,15 @@ class gamescene extends Phaser.Scene {
     });
     freezer.on("pointerout", function () {
       this.anims.play("closed");
+      if (
+        mundo.flecha != undefined &&
+        F_burgerAgarrada &&
+        F_nivelactualnum == 1 &&
+        mundo.flecha.data.values.next == true
+      ) {
+        //señalador para el primer nivel
+        mundo.flecha.setDepth(-1).setData({ next: false, finished: true });
+      }
     });
 
     //freezer crea burgers
@@ -761,16 +762,18 @@ class gamescene extends Phaser.Scene {
     b_continuar.on(
       "pointerup",
       function () {
-        levelTimer.paused = false;
-        bgm_gameplay.volume = bgm_gameplay.volume * 2;
-        for (var i = 0; i < comandera.length; i++) {
-          comandera[i].timer.paused = false;
+        if (F_pausa) {
+          levelTimer.paused = false;
+          bgm_gameplay.volume = bgm_gameplay.volume * 2;
+          for (var i = 0; i < comandera.length; i++) {
+            comandera[i].timer.paused = false;
+          }
+          s_click.play();
+          overlayPausa.setDepth(-1);
+          b_continuar.setDepth(-1).disableInteractive();
+          b_salir.setDepth(-1).disableInteractive();
+          F_pausa = false;
         }
-        s_click.play();
-        overlayPausa.setDepth(-1);
-        b_continuar.setDepth(-1).disableInteractive();
-        b_salir.setDepth(-1).disableInteractive();
-        F_pausa = false;
       },
       this
     );
@@ -848,6 +851,13 @@ class gamescene extends Phaser.Scene {
       "pointerup",
       function () {
         if (!F_burgerDone && !F_selniv && !F_pausa) {
+          if (
+            mundo.flecha != undefined &&
+            F_nivelactualnum == 1 &&
+            mundo.flecha.data.values.finished == false
+          ) {
+            mundo.flecha.setDepth(11);
+          }
           s_click.play();
           botArmado.setFrame(0);
           botFregadero.setFrame(0);
@@ -864,6 +874,9 @@ class gamescene extends Phaser.Scene {
       "pointerup",
       function () {
         if (!F_burgerDone && !F_selniv && !F_pausa) {
+          if (mundo.flecha != undefined && F_nivelactualnum == 1) {
+            mundo.flecha.setDepth(-1);
+          }
           s_click.play();
           botPlancha.setFrame(0);
           botFregadero.setFrame(0);
@@ -933,7 +946,14 @@ class gamescene extends Phaser.Scene {
 
   update(time, delta) {
     mundo = this;
-    if(levelTimer != undefined && !F_nivelterminado){    
+
+    if (mundo.scale.isFullscreen) {
+      b_fullscreen.setFrame(1);
+    } else {
+      b_fullscreen.setFrame(0);
+    }
+
+    if (levelTimer != undefined && !F_nivelterminado) {
       timeText.text = this.msToTime(Phaser.Math.CeilTo(levelTimer.elapsed));
     }
     if (!F_manoslimpias) {
@@ -1028,11 +1048,28 @@ class gamescene extends Phaser.Scene {
           comandera[i].on("pointerup", function () {
             if (!F_burgerDone && !F_selniv && !F_pausa) {
               //si la hamburguesa no está terminada, se arma el ticket en la pantalla
+
               s_ticket.play();
               this.setDepth(-1);
               overlayTicket
                 .setInteractive()
                 .setDepth(11 + alturaPilaPlato + alturaPilaTabla);
+
+              if (
+                mundo.flecha != undefined &&
+                F_nivelactualnum == 1 &&
+                mundo.flecha.data.values.finished == false
+              ) {
+                if (mundo.flecha.data.values.next == false) {
+                  mundo.flecha.setRotation(1.570796).setData({ next: true });
+                  mundo.flecha.x += 220;
+                }
+                if (estacion == 1) {
+                  mundo.flecha.setDepth(overlayTicket.depth - 1);
+                }
+                //señalador para el primer nivel
+              }
+
               textoTicket
                 .setText(this.id)
                 .setDepth(11 + alturaPilaPlato + alturaPilaTabla);
@@ -1281,120 +1318,6 @@ class gamescene extends Phaser.Scene {
                 .setScrollFactor(0)
                 .setScale(0.2)
                 .setDepth(99 + alturaPilaPlato + alturaPilaTabla);
-
-              //si la hamburguesa esta terminada, se inicia la determinación de puntaje
-              /*
-                this.removeInteractive();
-                this.active = false;
-                var cantTabla = tabla_burgers.length;
-                var cantTicket = this.content.length;
-                console.log(this.content);
-                for (var b = 0; b < 6; b++) {
-                  //FIDELIDAD - compara las repeticiones de cada ingrediente en ticket y en hamburguesa armada
-                  for (var c = 0; c < cantTabla; c++) {
-                    if (tabla_burgers[c].data.values.ing == b) {
-                      repeticionesA += 1;
-                    }
-                  }
-                  for (var d = 0; d < cantTicket; d++) {
-                    if (this.content[d] == b) {
-                      repeticionesB += 1;
-                    }
-                  }
-                  if (repeticionesA == repeticionesB) {
-                    //si hay igual repeticion que en ticket, se suma puntaje
-                    puntajeA += 1;
-                  } else if (repeticionesA < repeticionesB) {
-                    //si hay menos cantidad de cada ingrediente se resta puntaje
-                    if (puntajeA > 0) {
-                      puntajeA -= 1;
-                    }
-                  }
-                  repeticionesA = 0;
-                  repeticionesB = 0;
-                }
-                //se le da un peso superior a la hamburguesa
-                var repeticionesBurgerA = 0;
-                var repeticionesBurgerB = 0;
-                for (var c = 0; c < cantTabla; c++) {
-                  if (tabla_burgers[c].data.values.ing == 5) {
-                    repeticionesBurgerA += 1;
-                    console.log(repeticionesBurgerA);
-                  }
-                  if (this.content[c] == 5) {
-                    repeticionesBurgerB += 1;
-                    console.log(repeticionesBurgerB);
-                  }
-                }
-                if (repeticionesBurgerA == repeticionesBurgerB) {
-                  puntajeA += 5;
-                }
-
-                for (var c = 0; c < cantTabla; c++) {
-                  //chequea contaminación de ingredientes y cocción de las hamburguesas
-                  if (tabla_burgers[c].data.values.contaminado == true) {
-                    F_contaminado = true;
-                  }
-                  if (tabla_burgers[c].data.values.ing == 5) {
-                    //5 = hamburguesa
-
-                    if (tabla_burgers[c].data.values.ladoA - 3 > 0) {
-                      //si se quemo resta puntaje
-                      puntajeA -= (tabla_burgers[c].data.values.ladoA - 3) * 2;
-                    }
-                    if (tabla_burgers[c].data.values.ladoB - 3 > 0) {
-                      puntajeA -= (tabla_burgers[c].data.values.ladoB - 3) * 2;
-                    }
-                  }
-                }
-                if (!F_contaminado) {
-                  //si no está contaminado, se suma puntaje
-                  puntajeB += 1;
-                }
-                for (var c = 0; c < cantTabla; c++) {
-                  //chequea el orden de los ingredientes, suma puntos de manera acorde, y luego elimina la hamburguesa
-
-                  if (tabla_burgers[0].data.values.ing == this.content[c]) {
-                    puntajeA += 1;
-                  }
-                  tabla_burgers[0].x += 5000;
-                  tabla_burgers.splice(0, 1);
-                }
-
-                F_burgerDone = false;
-                overlayBurgerDone.setDepth(-1);
-                this.setDepth(-1);
-                this.setInteractive(false);
-                ticketsleft -= 1;
-                if (puntajeA > 0) {
-                  puntajeA = Phaser.Math.CeilTo(
-                    (puntajeA / (11 + this.content.length)) * 100
-                  );
-                } else {
-                  puntajeA = 0;
-                }
-                puntajeB = Phaser.Math.CeilTo(puntajeB * 100);
-                //si la hamburguesa esta contaminada, el puntaje de salubridad tiene mucho más peso
-                if (puntajeB == 0) {
-                  puntajeTotal = Phaser.Math.CeilTo(
-                    (16 * puntajeA + 16 * puntajeB) / 32
-                  );
-                } else {
-                  puntajeTotal = Phaser.Math.CeilTo(
-                    (15 * puntajeA + puntajeB) / 16
-                  );
-                }
-                puntajeAfinal += puntajeA;
-                puntajeBfinal += puntajeB;
-                puntajeTotalfinal += puntajeTotal;
-
-                console.log("Fidelidad:" + puntajeA);
-                console.log("Salubridad:" + puntajeB);
-                console.log("Total:" + puntajeTotal);
-
-                puntajeA = 0; //fidelidad
-                puntajeB = 0; //salubridad
-                puntajeTotal = 100;*/
             }
           });
         }
@@ -1427,8 +1350,10 @@ class gamescene extends Phaser.Scene {
           for (var i = 0; i < dibujoTicket.length; i++) {
             dibujoTicket[i].destroy();
           }
-          b_confirmar_T.removeInteractive().setDepth(-1);
-          b_cancelar_T.setDepth(-1);
+          if (b_confirmar_T != undefined && b_cancelar_T != undefined) {
+            b_confirmar_T.removeInteractive().setDepth(-1);
+            b_cancelar_T.setDepth(-1);
+          }
         },
         this
       );
@@ -1511,10 +1436,18 @@ class gamescene extends Phaser.Scene {
       if (puntajeCfinal < 0) {
         puntajeCfinal = 0;
       }
-      puntajeTotalfinal = Phaser.Math.CeilTo(
-        ((10 * puntajeTotalfinal) / ticketsjson.cantTickets + puntajeCfinal) /
-          11
-      );
+      if (puntajeCfinal > 60) {
+        puntajeTotalfinal = Phaser.Math.CeilTo(
+          ((10 * puntajeTotalfinal) / ticketsjson.cantTickets + puntajeCfinal) /
+            11
+        );
+      } else {
+        puntajeTotalfinal = Phaser.Math.CeilTo(
+          ((2 * puntajeTotalfinal) / ticketsjson.cantTickets + puntajeCfinal) /
+            3
+        );
+      }
+
       F_burgerDone = true;
       overlayPuntaje.setDepth(10 + alturaPilaPlato + alturaPilaTabla);
       if (puntajeTotalfinal > 70) {
@@ -1871,7 +1804,8 @@ class gamescene extends Phaser.Scene {
             }
             if (ctndr_ing[b].data.values.ing == 4) {
               F_panarriba = true;
-              b_campana.setFrame(2);
+              //b_campana.setFrame(2);
+              flecha2.setDepth(99);
               /*F_burgerDone = true;
               overlayBurgerDone.setDepth(9 + alturaPilaPlato + alturaPilaTabla);
               b_basura.setDepth(8);
@@ -2276,11 +2210,11 @@ class gamescene extends Phaser.Scene {
       seconds = Math.floor((duration / 1000) % 60),
       minutes = Math.floor((duration / (1000 * 60)) % 60),
       hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
-  
-    hours = (hours < 10) ? "0" + hours : hours;
-    minutes = (minutes < 10) ? "0" + minutes : minutes;
-    seconds = (seconds < 10) ? "0" + seconds : seconds;
-  
+
+    hours = hours < 10 ? "0" + hours : hours;
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+
     return minutes + ":" + seconds + "." + milliseconds;
   }
 }
