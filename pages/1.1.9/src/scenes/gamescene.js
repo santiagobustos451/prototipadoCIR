@@ -1585,7 +1585,6 @@ class gamescene extends Phaser.Scene {
       b_niveles.on("pointerup", this.levelselect, this);
       ticketsleft = 99;
     }
-
     //cocinado de hamburguesas
     for (var a = 0; a < ctndr_burgers.length; a++) {
       if (ctndr_burgers[a] != undefined) {
@@ -1596,11 +1595,18 @@ class gamescene extends Phaser.Scene {
           !F_selniv &&
           !F_pausa
         ) {
-          ctndr_burgers[a].data.values.cocinado++;
+          ctndr_burgers[a].data.values.cocinado.paused = false;
           if (
-            ctndr_burgers[a].data.values.cocinado % 400 === 0 &&
+            ctndr_burgers[a].data.values.cocinado.elapsed > 4000 &&
             ctndr_burgers[a].data.values.ladoB < 5
           ) {
+            ctndr_burgers[a].data.values.almB +=
+              ctndr_burgers[a].data.values.cocinado.elapsed;
+            ctndr_burgers[a].data.values.cocinado.elapsed = 0;
+            console.log(
+              ctndr_burgers[a].data.values.almB +
+                ctndr_burgers[a].data.values.cocinado.elapsed
+            );
             ctndr_burgers[a].data.values.ladoB++;
             ctndr_burgers[a].anims.play(
               String(ctndr_burgers[a].data.values.ladoA).concat(
@@ -1608,6 +1614,8 @@ class gamescene extends Phaser.Scene {
               )
             );
           }
+        } else {
+          ctndr_burgers[a].data.values.cocinado.paused = true;
         }
         //Barra de progreso
         ctndr_burgers[a].data.values.progBarBack
@@ -1628,11 +1636,18 @@ class gamescene extends Phaser.Scene {
           } else {
             ctndr_burgers[a].data.values.progBar.fillStyle(0x4f0806, 1);
           }
-          if (ctndr_burgers[a].data.values.cocinado < 1200) {
+          if (
+            ctndr_burgers[a].data.values.almB +
+              ctndr_burgers[a].data.values.cocinado.elapsed <
+            12000
+          ) {
             ctndr_burgers[a].data.values.progBar.fillRect(
               ctndr_burgers[a].x - 25,
               ctndr_burgers[a].y - 40,
-              (ctndr_burgers[a].data.values.cocinado / 1200) * 50,
+              ((ctndr_burgers[a].data.values.cocinado.elapsed +
+                ctndr_burgers[a].data.values.almB) /
+                12000) *
+                50,
               5
             );
           } else {
@@ -1658,11 +1673,11 @@ class gamescene extends Phaser.Scene {
           } else {
             ctndr_burgers[a].data.values.progBarA.fillStyle(0x4f0806, 1);
           }
-          if (ctndr_burgers[a].data.values.cocinadoA < 1200) {
+          if (ctndr_burgers[a].data.values.cocinadoA < 12000) {
             ctndr_burgers[a].data.values.progBarA.fillRect(
               ctndr_burgers[a].x - 25,
               ctndr_burgers[a].y - 50,
-              (ctndr_burgers[a].data.values.cocinadoA / 1200) * 50,
+              (ctndr_burgers[a].data.values.cocinadoA / 12000) * 50,
               5
             );
           } else {
@@ -1861,6 +1876,8 @@ class gamescene extends Phaser.Scene {
       ladoB: 1,
       cocinado: 0,
       cocinadoA: 0,
+      almB: 0,
+      almA: 0,
       flip: 0,
       enplato: false,
       entabla: false,
@@ -1872,6 +1889,11 @@ class gamescene extends Phaser.Scene {
     this.newBurger.data.values.progBarBack = this.add.graphics().setAlpha(0);
     this.newBurger.data.values.progBar = this.add.graphics().setAlpha(0);
     this.newBurger.data.values.progBarA = this.add.graphics().setAlpha(0);
+    this.newBurger.data.values.cocinado = this.time.addEvent({
+      delay: Infinity, // ms
+      callback: null,
+      paused: true,
+    });
     this.input.on("pointermove", this.follow, this); //sigue al cursor
     this.input.on("pointerup", this.drop, this); //si se suelta, se vuelve draggeable
     this.input.on("drag", this.drag, this); //al draggear, la burger está agarrada
@@ -1940,9 +1962,13 @@ class gamescene extends Phaser.Scene {
       this.anims.play(
         String(this.data.values.ladoA).concat(this.data.values.ladoB)
       );
+      this.data.values.cocinado.paused = true;
       var c = this.data.values.cocinadoA;
-      this.data.values.cocinadoA = this.data.values.cocinado;
-      this.data.values.cocinado = c;
+      this.data.values.cocinadoA =
+        this.data.values.almB + this.data.values.cocinado.elapsed;
+      this.data.values.almB = 4000 * (this.data.values.ladoB - 1);
+      this.data.values.cocinado.elapsed = c - this.data.values.almB;
+      this.data.values.cocinado.paused = false;
     }
     this.data.values.agarrada = false;
   }
