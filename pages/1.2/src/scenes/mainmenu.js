@@ -33,6 +33,10 @@ class mainmenu extends Phaser.Scene {
   }
 
   create() {
+    console.log(localStorage.getItem("idioma"));
+    if (localStorage.getItem("idioma") == undefined) {
+      localStorage.setItem("idioma", "espanol");
+    }
     mundo = this;
     s_muteclick = this.sound.add("s_click");
     s_click = this.sound.add("s_click");
