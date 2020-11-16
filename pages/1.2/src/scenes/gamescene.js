@@ -2673,7 +2673,7 @@ class gamescene extends Phaser.Scene {
       bgm_gameplay.stop();
       s_ambiente.stop();
 
-      this.scene.restart();
+      this.scene.stop();
       this.scene.switch("mainmenu");
 
       F_reseteado = true;
