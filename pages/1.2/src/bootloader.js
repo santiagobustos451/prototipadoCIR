@@ -4,7 +4,7 @@ class Bootloader extends Phaser.Scene {
   }
   preload() {
     this.load.on("complete", () => {
-      this.scene.start("mainmenu");
+      this.scene.start("logounraf");
     });
     var progressBar = this.add.graphics();
     var progressBox = this.add.graphics();
@@ -366,6 +366,11 @@ class Bootloader extends Phaser.Scene {
         frameHeight: 117,
       }
     );
+
+    this.load.spritesheet("Sp_unraf", "./assets/gif_unraf.png", {
+      frameWidth: 813,
+      frameHeight: 360,
+    });
   }
 
   loadFont(name, url) {

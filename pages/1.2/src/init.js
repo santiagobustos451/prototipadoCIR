@@ -2,6 +2,7 @@ import Bootloader from "./bootloader.js";
 import mainmenu from "./scenes/mainmenu.js";
 import gamescene from "./scenes/gamescene.js";
 import ayuda from "./scenes/ayuda.js";
+import logounraf from "./scenes/logounraf.js";
 
 const config = {
   width: 800,
@@ -21,7 +22,7 @@ const config = {
       gravity: { y: 0 },
     },
   },
-  scene: [Bootloader, mainmenu, ayuda, gamescene],
+  scene: [Bootloader, logounraf, mainmenu, ayuda, gamescene],
 };
 
 new Phaser.Game(config);
