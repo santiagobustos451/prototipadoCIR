@@ -667,7 +667,7 @@ class gamescene extends Phaser.Scene {
     hb_lechuga.on(
       "pointerdown",
       () => {
-        if (!F_burgerDone && !F_selniv && !F_pausa) {
+        if (!F_burgerDone && !F_selniv && !F_pausa && estacion == 2) {
           this.createIng("obj_lechuga", 2);
         }
       },
@@ -676,7 +676,7 @@ class gamescene extends Phaser.Scene {
     hb_cebolla.on(
       "pointerdown",
       () => {
-        if (!F_burgerDone && !F_selniv && !F_pausa) {
+        if (!F_burgerDone && !F_selniv && !F_pausa && estacion == 2) {
           this.createIng("obj_cebolla", 1);
         }
       },
@@ -685,7 +685,7 @@ class gamescene extends Phaser.Scene {
     hb_tomate.on(
       "pointerdown",
       () => {
-        if (!F_burgerDone && !F_selniv && !F_pausa) {
+        if (!F_burgerDone && !F_selniv && !F_pausa && estacion == 2) {
           this.createIng("obj_tomate", 0);
         }
       },
@@ -694,7 +694,7 @@ class gamescene extends Phaser.Scene {
     hb_panabajo.on(
       "pointerdown",
       () => {
-        if (!F_burgerDone && !F_selniv && !F_pausa) {
+        if (!F_burgerDone && !F_selniv && !F_pausa && estacion == 2) {
           this.createIng("obj_panabajo", 3);
         }
       },
@@ -703,7 +703,7 @@ class gamescene extends Phaser.Scene {
     hb_panarriba.on(
       "pointerdown",
       () => {
-        if (!F_burgerDone && !F_selniv && !F_pausa) {
+        if (!F_burgerDone && !F_selniv && !F_pausa && estacion == 2) {
           this.createIng("obj_panarriba", 4);
         }
       },
@@ -1097,11 +1097,12 @@ class gamescene extends Phaser.Scene {
   update(time, delta) {
     mundo = this;
 
-    if (estacion != 1) {
+    /*if (estacion != 1) {
       if (mundo.flecha != undefined) {
+        console.log(mundo.flecha);
         mundo.flecha.setDepth(-1);
       }
-    }
+    }*/
 
     if (mundo.scale.isFullscreen) {
       b_fullscreen.setFrame(1);
@@ -1498,7 +1499,7 @@ class gamescene extends Phaser.Scene {
           loop: false,
         });
       }
-      console.log(comandera);
+      //console.log(comandera);
       overlayTicket.on(
         "pointerup",
         function () {
@@ -2081,7 +2082,8 @@ class gamescene extends Phaser.Scene {
                   .setDepth(999 + alturaPilaTabla + alturaPilaPlato);
               }
               b_volver.setDepth(1000 + alturaPilaTabla + alturaPilaPlato);
-              b_volver.y = 720;
+              b_volver.y = 530;
+              timeText.depth = 0;
               b_niveles.removeInteractive();
               b_siguiente.removeInteractive();
               b_campana.removeInteractive();
@@ -2308,6 +2310,7 @@ class gamescene extends Phaser.Scene {
           } else {
             plato_burgers[b].x = 627 + 550;
             plato_burgers[b].y = 455 + 10 - alturaPilaPlato;
+            plato_burgers[b].depth = plato_burgers.length - 1;
           }
           if (plato_burgers[b] != undefined) {
             if (
