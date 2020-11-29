@@ -2307,6 +2307,13 @@ class gamescene extends Phaser.Scene {
             plato_burgers[b].y < 515
           ) {
             this.situarBurgerTabla(b);
+          } else if (
+            plato_burgers[b].x >= 1530 &&
+            plato_burgers[b].x < 1675 &&
+            plato_burgers[b].y >= 403 &&
+            plato_burgers[b].y < 490
+          ) {
+            this.deleteBurgerTabla(b);
           } else {
             plato_burgers[b].x = 627 + 550;
             plato_burgers[b].y = 455 + 10 - alturaPilaPlato;
@@ -2357,6 +2364,14 @@ class gamescene extends Phaser.Scene {
             }
             ctndr_ing.splice(b, 1);
           } else {
+            if (
+              ctndr_ing[b].x >= 1530 &&
+              ctndr_ing[b].x < 1675 &&
+              ctndr_ing[b].y >= 403 &&
+              ctndr_ing[b].y < 490
+            ) {
+              s_basura.play();
+            }
             ctndr_ing[b].x += 5000;
             ctndr_ing[b].destroy;
           }
@@ -2610,6 +2625,29 @@ class gamescene extends Phaser.Scene {
       }
       alturaPilaPlato -= 10;
       s_hit.play();
+    }
+  }
+  deleteBurgerTabla(b) {
+    if (
+      plato_burgers[b].data.values.enplato == true &&
+      plato_burgers[b].data.values.lastplato == true &&
+      estacion == 2 &&
+      !F_burgerDone &&
+      !F_burgerAgarrada
+    ) {
+      alturaPilaTabla += 10;
+      mundo.input.setDraggable(plato_burgers[b], false);
+      plato_burgers[b].x = 10000;
+      plato_burgers[b].y = 0;
+      plato_burgers[b].depth = -1;
+      plato_burgers[b].data.values.enplato = false;
+      plato_burgers[b].data.values.lastplato = false;
+      plato_burgers.splice(plato_burgers.length - 1, 1);
+      if (plato_burgers[plato_burgers.length - 1] != undefined) {
+        plato_burgers[plato_burgers.length - 1].data.values.lastplato = true;
+      }
+      alturaPilaPlato -= 10;
+      s_basura.play();
     }
   }
   situarEnTabla(ing) {
