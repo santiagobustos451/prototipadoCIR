@@ -13,19 +13,13 @@ class logounraf extends Phaser.Scene {
     let center_width = this.sys.game.config.width / 2;
     let center_height = this.sys.game.config.height / 2;
 
-    this.anims.create({
-      key: "anim_unraf",
-      frames: this.anims.generateFrameNumbers("Sp_unraf", {
-        start: 0,
-        end: 45,
-      }),
-      frameRate: 20,
-    });
-    anim = this.add.sprite(center_width, center_height, "Sp_unraf");
-    anim.play("anim_unraf");
+    anim = this.add
+      .video(center_width, center_height, "v_unraf")
+      .setVolume(0)
+      .play(false);
 
     timer = this.time.addEvent({
-      delay: 3500,
+      delay: 4000,
       callback: this.changeScene,
       callbackScope: this,
       loop: false,

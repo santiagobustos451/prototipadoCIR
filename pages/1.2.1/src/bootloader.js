@@ -73,6 +73,7 @@ class Bootloader extends Phaser.Scene {
     this.load.video("v_lavado", "./assets/estacion_lavado.mp4");
     this.load.video("v_armado", "./assets/estacion_armado.mp4");
     this.load.video("v_cocinado", "./assets/estacion_cocinado.mp4");
+    this.load.video("v_unraf", "./assets/Unraf-1.mp4");
 
     this.load.audio("s_ambiente", "./assets/audio/ambience_gameplay.mp3");
     this.load.audio("s_burbujas", "./assets/audio/sfx_burbujas.mp3");
