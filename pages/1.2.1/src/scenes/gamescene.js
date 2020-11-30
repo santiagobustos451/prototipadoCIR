@@ -986,6 +986,11 @@ class gamescene extends Phaser.Scene {
       "pointerup",
       function () {
         if (!F_burgerDone && !F_selniv && !F_pausa) {
+          if (mundo.flecha != undefined && F_nivelactualnum == 1) {
+            mundo.flecha.setDepth(-1);
+          }
+        }
+        if (!F_burgerDone && !F_selniv && !F_pausa) {
           s_click.play();
           botArmado.setFrame(0);
           botPlancha.setFrame(0);
