@@ -2640,7 +2640,6 @@ class gamescene extends Phaser.Scene {
       !F_burgerDone &&
       !F_burgerAgarrada
     ) {
-      alturaPilaTabla += 10;
       mundo.input.setDraggable(plato_burgers[b], false);
       plato_burgers[b].x = 10000;
       plato_burgers[b].y = 0;
